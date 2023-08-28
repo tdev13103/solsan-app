@@ -19,7 +19,7 @@
     "storybook:build": "build-storybook"
   },
   "dependencies": {
-    "@apollo/client": "0.0.0-pr-11040-20230707082444",
+    "@apollo/client": "^3.8.1",
     "@apollo/experimental-nextjs-app-support": "^0.4.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.6.0",
@@ -33,7 +33,7 @@
     "date-fns": "^2.30.0",
     "eslint-config-next": "^13.4.13",
     "express": "^4.18.2",
-    "graphql": "^16.7.1",
+    "graphql": "^16.8.0",
     "js-cookie": "^3.0.5",
     "next": "^13.4.13",
     "nextjs-progressbar": "^0.0.16",
