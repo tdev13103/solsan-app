@@ -1,0 +1,26 @@
+@import './_reset.scss';
+
+body {
+    background: #fff;
+    position: relative;
+
+    &.popup-open {
+        overflow: hidden;
+    }
+
+    * {
+        font-style: normal;
+        font-weight: 400;
+        color: #221551;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        resize: none;
+    }
+
+}
+
+.page-without-banner {
+    padding-top: 175px;
+}
