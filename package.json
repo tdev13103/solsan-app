@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@apollo/client": "0.0.0-pr-11040-20230707082444",
-    "@apollo/experimental-nextjs-app-support": "^0.3.2",
+    "@apollo/experimental-nextjs-app-support": "^0.4.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.6.0",
     "@next/bundle-analyzer": "^13.4.9",
