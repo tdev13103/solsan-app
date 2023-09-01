@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import popupReducer from "@/redux/features/popupActions";
+import cartReducer from "@/redux/features/cartActions";
 
 export const store = configureStore( {
 	reducer    : {
-		popupReducer
+		popupReducer,
+		cartReducer
 	},
 	middleware : ( getDefaultMiddleware ) =>
 		getDefaultMiddleware( {

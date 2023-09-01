@@ -44,6 +44,19 @@ interface ThemeSettings {
 	cformThanksTitle: string;
 	cformThanksDesc: string;
 	cformThanksBtn: ButtonProps
+	priceInclVatLabel: string;
+	productModal: ProductModal
+}
+
+interface ProductModal {
+	referenceText: string;
+	referenceCheckboxLabel: string;
+	closeButtonText: string;
+	addToCartButtonText: string;
+	contentRepeater: {
+		title: string;
+		content: string;
+	}[]
 }
 
 interface ButtonProps {

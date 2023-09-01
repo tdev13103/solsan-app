@@ -9,6 +9,9 @@ import { useThemeContext } from "@/context/theme.context";
 import MobileMenu from "@/components/Header/MobileMenu";
 import HelperComponents from "@/helpers/HelperComponents";
 import theme from "@/styles/theme";
+import ShoppingBag from "@/components/Icons/ShoppingBag";
+import Link from "next/link";
+import { useAppSelector } from "@/redux/hooks";
 
 interface HeaderLink {
 	link: string;
@@ -68,7 +71,7 @@ const HeaderMainWrapper = styled( 'header' )`
 			margin-right: ${ theme.spaces.large1 };
 			
 			@media screen and (max-width: ${ theme.responsiveMediaSizes.m1270 }) {
-				margin-right: ${ theme.spaces.medium1 };
+				margin-right: ${ theme.spaces.small2 };
 			}
 			
 			a {
@@ -180,12 +183,44 @@ const HeaderMainWrapper = styled( 'header' )`
 				display: block;
 			}
 		}
+		
+		&__cart {
+			&_button {
+				position: relative;
+				display: flex;
+				padding: 7px;
+				align-items: flex-start;
+				border-radius: 12px;
+				border: 1px solid #221551;
+				margin-left: ${ theme.spaces.small };
+			}
+			
+			&_items {
+				position: absolute;
+				right: -11px;
+				top: -5px;
+				display: flex;
+				width: 25px;
+				height: 25px;
+				padding: 8px;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				gap: 10px;
+				border-radius: 50px;
+				background: #F59E3F;
+				font-size: 12px;
+				font-weight: 500;
+				line-height: normal;
+			}
+		}
 	}
 
 `;
 
 
 const Header: React.FC<HeaderActionProps> = ( { links } ) => {
+	const cartData = useAppSelector( state => state?.cartReducer?.items );
 	const { themeSettings } = useThemeContext();
 	const {
 		headerLogo,
@@ -193,6 +228,13 @@ const Header: React.FC<HeaderActionProps> = ( { links } ) => {
 		headerButtonType,
 		headerButtonLink
 	} = themeSettings;
+	
+	const totalQuantity = cartData.reduce((accumulator, product) => {
+		if (product?.quantity) {
+			return accumulator + product.quantity;
+		}
+		return accumulator;
+	}, 0);
 	
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState( false );
 	const [isPageScrolled, setIsPageScrolled] = useState( false );
@@ -237,6 +279,11 @@ const Header: React.FC<HeaderActionProps> = ( { links } ) => {
 					        title={ headerButtonTitle }
 					        type={ headerButtonType }
 					/>
+					
+					<Link href={ '/varukorg' } className="site-header__cart_button">
+						<ShoppingBag/>
+						<span className={ `site-header__cart_items` }>{ totalQuantity }</span>
+					</Link>
 				</div>
 				
 				<button onClick={ () => setIsMobileMenuOpen( true ) } className={ 'site-header__hamburger' }>

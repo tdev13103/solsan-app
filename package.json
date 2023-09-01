@@ -23,6 +23,8 @@
     "@apollo/experimental-nextjs-app-support": "^0.4.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@mantine/core": "^6.0.19",
+    "@mantine/hooks": "^6.0.19",
     "@next/bundle-analyzer": "^13.4.19",
     "@reduxjs/toolkit": "^1.9.5",
     "@types/js-cookie": "^3.0.3",

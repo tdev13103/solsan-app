@@ -71,6 +71,17 @@ query ThemeSettings {
         title
         url
       }
+      priceInclVatLabel
+      productModal {
+        referenceText
+        referenceCheckboxLabel
+        closeButtonText
+        addToCartButtonText
+        contentRepeater {
+          title
+          content
+        }
+      }
     }
   }
 }`;

@@ -30,6 +30,10 @@ const Btn = styled.button`
 		${ theme.buttons.button_4 }
 	}
 	
+	&.btn-button_5 {
+		${ theme.buttons.button_5 }
+	}
+	
 	&.btn-button_1 {
 		${ theme.buttons.button_1 }
 	}

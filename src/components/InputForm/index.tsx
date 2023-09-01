@@ -311,7 +311,7 @@ const InputForm: React.FC<InputFormProps> = ( {
 						       value={ param?.value }
 						       defaultChecked={ param?.checked }
 							// @ts-ignore
-							     onClick={ param.change }
+							     onClick={ param?.change }
 						/>
 						<label htmlFor={ param?.id }
 						       className={ `${ param?.checkboxLabelClass }__field-label` }

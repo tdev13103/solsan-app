@@ -18,4 +18,5 @@ export const componentImports: Record<string, any> = {
 	SolsamStepByStep : dynamic( () => import('@/components/blocks/SolsamStepByStep') ),
 	StatComponent    : dynamic( () => import('@/components/blocks/StatComponent') ),
 	TopBlock         : dynamic( () => import('@/components/blocks/TopBlock') ),
+	ProductOffer     : dynamic( () => import('@/components/blocks/ProductOffer') ),
 };

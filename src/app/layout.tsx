@@ -12,6 +12,8 @@ import CookiesBlock from "@/components/CookiesBlock";
 import GeneralPopupWrapper from "@/components/Popup/GeneralPopupWrapper";
 import { headers } from 'next/headers';
 import { ApolloWrapper } from "@/context/apollo-provider";
+import { productsSettings } from "@/lib/productsOptions";
+import { ProductsContextProvider } from "@/context/products.context";
 
 const poppins = Outfit( {
 	subsets  : ['latin'],
@@ -33,25 +35,31 @@ export default async function RootLayout( { children }: { children: React.ReactN
 	
 	
 	const menuProps = await menuSettings();
+	const productSettings = await productsSettings();
 	const themeOptions = await themeSettings();
 	
 	return (
 		<html lang="en-US" className={ poppins.className }>
 		<head></head>
 		<body>
-		<ThemeContextProvider value={ themeOptions } isMobile={ isMobileView }>
-			<ApolloWrapper>
-				<ThemeRegistry options={ { key : 'mui' } }>
-					<Header links={ menuProps?.['header-menu'] }/>
-					<Providers>
-						{ children }
-						<GeneralPopupWrapper/>
-						<CookiesBlock/>
-					</Providers>
-					<Footer links={ menuProps }/>
-				</ThemeRegistry>
-			</ApolloWrapper>
-		</ThemeContextProvider>
+		<Providers>
+			<ThemeContextProvider value={ themeOptions } isMobile={ isMobileView }>
+				<ProductsContextProvider value={ productSettings }>
+					<ApolloWrapper>
+						<ThemeRegistry options={ { key : 'mui' } }>
+							
+							<Header links={ menuProps?.['header-menu'] }/>
+							
+							{ children }
+							<GeneralPopupWrapper/>
+							<CookiesBlock/>
+							<Footer links={ menuProps }/>
+						
+						</ThemeRegistry>
+					</ApolloWrapper>
+				</ProductsContextProvider>
+			</ThemeContextProvider>
+		</Providers>
 		</body>
 		</html>
 	);

@@ -53,6 +53,9 @@ interface ResponsiveMediaSizes {
 	m850: string;
 	m768: string;
 	m480: string;
+	m415: string;
+	m375: string;
+	m330: string;
 }
 
 
@@ -70,6 +73,7 @@ interface ButtonStyles {
 	button_2: string;
 	button_3: string;
 	button_4: string;
+	button_5: string;
 }
 
 interface LinksStyles {
@@ -161,6 +165,9 @@ const responsiveMediaSizes = {
 	m850  : '850px',
 	m768  : '768px',
 	m480  : '480px',
+	m415  : '415px',
+	m375  : '375px',
+	m330  : '330px',
 }
 
 const heading = `
@@ -227,7 +234,7 @@ const theme: Theme = {
 	colors               : { ...colors },
 	borderRadius         : { ...borderRadius },
 	responsiveMediaSizes : { ...responsiveMediaSizes },
-	heading: heading,
+	heading              : heading,
 	
 	h1 : `
 		${ heading }
@@ -515,6 +522,18 @@ const theme: Theme = {
 				border-color : ${ colors.colorWhite };
 				color : ${ colors.colorSkyLight };
             }
+		`,
+		button_5 : `
+			${ btnStyles }
+			background-color : ${ colors.colorWhite };
+			border-color : ${ colors.colorNavyDark };
+			color : ${ colors.colorNavyDark };
+           
+      &:hover {
+        background-color : ${ colors.colorNavyDark };
+				border-color : ${ colors.colorWhite };
+				color : ${ colors.colorSkyLight };
+      }
 		`,
 	},
 	
