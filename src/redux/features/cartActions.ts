@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getFromLocalStorage, saveToLocalStorage } from "@/utils/localStorageUtils";
+import { saveToLocalStorage } from "@/utils/localStorageUtils";
 
 type CartItem = {
 	name: string | undefined;
@@ -17,10 +17,11 @@ type InitialStateType = {
 	items: CartItem[];
 };
 
-const existingCart: CartItem[] = getFromLocalStorage<CartItem[]>( "SolsanCartItems" ) || [];
+// const existingCart: CartItem[] = getFromLocalStorage<CartItem[]>( "SolsanCartItems" ) || [];
 
 const initialState: InitialStateType = {
-	items : existingCart ?? [],
+	// items : existingCart ?? [],
+	items : [],
 };
 
 export const cart = createSlice( {
@@ -78,6 +79,10 @@ export const cart = createSlice( {
 			
 			saveToLocalStorage( "SolsanCartItems", state.items );
 		},
+		addMultipleItems: (state, action: PayloadAction<CartItem[]>) => {
+			state.items = [...state.items, ...action.payload];
+			saveToLocalStorage("SolsanCartItems", state.items);
+		},
 	},
 } );
 
@@ -85,6 +90,7 @@ export const cart = createSlice( {
 export const {
 	setCartState,
 	updateCartItem,
-	deleteCartItem
+	deleteCartItem,
+	addMultipleItems
 } = cart.actions;
 export default cart.reducer;

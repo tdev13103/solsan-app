@@ -218,7 +218,7 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 		event.preventDefault();
 		const currentProduct = selectedProducts.find( product => product?.productId === productId );
 		const numericPrice = currentProduct?.price?.replace( /[^\d,.]/g, '' )?.split( '.' )[0]?.replace( /,/g, ' ' );
-		console.log( 'currentProduct', currentProduct );
+		
 		const cartItem: CartItem = {
 			id        : productId,
 			quantity  : 1,

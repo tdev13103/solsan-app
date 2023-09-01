@@ -11,7 +11,9 @@ import HelperComponents from "@/helpers/HelperComponents";
 import theme from "@/styles/theme";
 import ShoppingBag from "@/components/Icons/ShoppingBag";
 import Link from "next/link";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { getFromLocalStorage } from "@/utils/localStorageUtils";
+import { addMultipleItems } from "@/redux/features/cartActions";
 
 interface HeaderLink {
 	link: string;
@@ -22,6 +24,19 @@ interface HeaderLink {
 interface HeaderActionProps {
 	links?: HeaderLink[];
 }
+
+
+type CartItem = {
+	name: string | undefined;
+	id: number;
+	price: string | undefined;
+	quantity: number;
+	image: {
+		sourceUrl: string;
+		title: string;
+	}
+	equipment: string;
+};
 
 
 const HeaderMainWrapper = styled( 'header' )`
@@ -229,12 +244,14 @@ const Header: React.FC<HeaderActionProps> = ( { links } ) => {
 		headerButtonLink
 	} = themeSettings;
 	
-	const totalQuantity = cartData.reduce((accumulator, product) => {
-		if (product?.quantity) {
+	const dispatch = useAppDispatch();
+	
+	const totalQuantity = cartData.reduce( ( accumulator, product ) => {
+		if ( product?.quantity ) {
 			return accumulator + product.quantity;
 		}
 		return accumulator;
-	}, 0);
+	}, 0 );
 	
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState( false );
 	const [isPageScrolled, setIsPageScrolled] = useState( false );
@@ -250,6 +267,11 @@ const Header: React.FC<HeaderActionProps> = ( { links } ) => {
 			window.removeEventListener( "scroll", onScroll, { passive : true } );
 		}
 	}, [onScroll] );
+	
+	useEffect( () => {
+		const existingCart: CartItem[] = getFromLocalStorage( "SolsanCartItems" ) || [];
+		dispatch( addMultipleItems( existingCart ) );
+	}, [] )
 	
 	return (
 		<HeaderMainWrapper
