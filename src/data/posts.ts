@@ -15,6 +15,14 @@ export const QUERY_PAGE_BY_SLUG = gql`
 	        json
 	      }
 	    }
+	    seo {
+	      opengraphDescription
+	      opengraphTitle
+	      opengraphUrl
+	      schema {
+	        raw
+	      }
+	    }
 	  }
   }
 `;
@@ -54,6 +62,14 @@ query Posts($first: Int!, $after: String) {
 	      attributesJSON
 	      blockImage {
 	        json
+	      }
+	    }
+	    seo {
+	      opengraphDescription
+	      opengraphTitle
+	      opengraphUrl
+	      schema {
+	        raw
 	      }
 	    }
     }

@@ -47,14 +47,11 @@ export default async function RootLayout( { children }: { children: React.ReactN
 				<ProductsContextProvider value={ productSettings }>
 					<ApolloWrapper>
 						<ThemeRegistry options={ { key : 'mui' } }>
-							
 							<Header links={ menuProps?.['header-menu'] }/>
-							
 							{ children }
 							<GeneralPopupWrapper/>
 							<CookiesBlock/>
 							<Footer links={ menuProps }/>
-						
 						</ThemeRegistry>
 					</ApolloWrapper>
 				</ProductsContextProvider>
