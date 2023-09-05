@@ -14,7 +14,7 @@ interface ProductsSettings {
 		title: string;
 	}
 	slug: string;
-	title: string;
+	name: string;
 	uri: string;
 	productId: number;
 	price: string;
@@ -228,7 +228,7 @@ const ProductModal: FC<ProductModalProps> = ( {
 						className={ 'product-modal__product_title' }
 						variant={ 'h3' }
 						type={ 'h3' }>
-						{ currentProduct?.title }
+						{ currentProduct?.name }
 					</Typography>
 					{
 						currentProduct &&

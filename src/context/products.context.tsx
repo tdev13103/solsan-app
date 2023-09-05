@@ -9,7 +9,7 @@ interface ProductsSettings {
 		title: string;
 	}
 	slug: string;
-	title: string;
+	name: string;
 	uri: string;
 	productId: number;
 	price: string;
@@ -21,9 +21,21 @@ interface ProductsSettings {
 	}
 }
 
+interface ProductSettingsProps {
+	products: ProductsSettings[],
+	shippingMethods: {
+		cost: number;
+		title: string;
+	}[]
+	taxRates: {
+		name: string;
+		rate: string;
+	}[]
+}
+
 
 interface ProductsContextProps {
-	productsSettings: ProductsSettings[];
+	productsSettings: ProductSettingsProps;
 	setProductsSettings: Dispatch<SetStateAction<ProductsSettings>>;
 }
 

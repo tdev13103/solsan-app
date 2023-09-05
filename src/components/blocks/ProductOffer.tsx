@@ -209,7 +209,7 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 	const [selectedProductId, setSelectedProductId] = useState( 0 )
 	const [installationValues, setInstallationValues] = useState<Array<{ id: string; checked: boolean }>>( [] );
 	
-	const selectedProducts = productsSettings.filter( product => product_repeater?.some( item => item?.product_item === product?.productId ) )
+	const selectedProducts = productsSettings?.products.filter( product => product_repeater?.some( item => item?.product_item === product?.productId ) )
 	                                         .reverse()
 	
 	const ref = useRef<(HTMLInputElement | null)[]>( Array( selectedProducts?.length ).fill( null ) );
@@ -222,7 +222,7 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 		const cartItem: CartItem = {
 			id        : productId,
 			quantity  : 1,
-			name      : currentProduct?.title,
+			name      : currentProduct?.name,
 			price     : numericPrice,
 			image     : currentProduct?.image || {
 				sourceUrl : '',
@@ -286,11 +286,11 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 								<div className="product-offer__product"
 								     key={ generateKey( index ) }>
 									{
-										item.title &&
+										item.name &&
                     <Typography
                       className={ 'product-offer__p-title' }
                       variant={ 'h4' } type={ 'h4' }>
-											{ item.title }
+											{ item.name }
                     </Typography>
 									}
 									{

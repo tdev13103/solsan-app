@@ -13,6 +13,7 @@ import { deleteCartItem, updateCartItem } from "@/redux/features/cartActions";
 import Link from "next/link";
 import RemoveProduct from "@/components/Icons/RemoveProduct";
 import Button from "@/components/Button";
+import CartTotal from "@/components/CartTotal";
 
 interface ProductCartProps {
 	data: {
@@ -191,46 +192,6 @@ const Wrapper = styled.div`
 			cursor: pointer;
 		}
 		
-		&__total {
-			
-			&_price {
-				font-size: 16px;
-				font-weight: 700;
-			}
-			
-			&_title {
-				font-size: 16px;
-				font-weight: 700;
-			}
-			
-			&_wrap {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				margin: 0 0 ${ theme.spaces.normal };
-			}
-		}
-		
-		&__vat {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin: 0 0 ${ theme.spaces.small };
-			
-			&_price {
-				font-size: 16px;
-				font-weight: 700;
-				
-				span {
-					font-weight: 400;
-				}
-			}
-			
-			&_title {
-				font-size: 16px;
-			}
-		}
-		
 		&__checkout-btn {
 			margin-top: ${ theme.spaces.medium1 };
 		}
@@ -276,20 +237,6 @@ const ProductCart: FC<ProductCartProps> = ( {
 		}
 	};
 	
-	const calculateTotalPrice = ( products: CartItem[] ) => {
-		let totalPrice = 0;
-		
-		for ( const product of products ) {
-			const price = product.price && parseFloat( product.price.replace( /\s/g, "" ).replace( ",", "." ) );
-			
-			if ( price ) {
-				totalPrice += price * product.quantity;
-			}
-		}
-		
-		return totalPrice;
-	};
-	
 	
 	const plusItemToCart = ( productId: number ) => {
 		updateCartItems( productId, 'add' );
@@ -318,7 +265,6 @@ const ProductCart: FC<ProductCartProps> = ( {
 			</Wrapper>
 		)
 	}
-	
 	
 	return (
 		<Wrapper className={ `${ pageAdditionalSettings?.isItGeneralPage ? 'page-without-banner' : '' }` }>
@@ -417,68 +363,7 @@ const ProductCart: FC<ProductCartProps> = ( {
 						}
 					</div>
 					
-					<div className={ 'product-cart__total_wrap' }>
-						<Typography
-							className={ 'product-cart__total_title' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							Varukorg totalt
-						</Typography>
-						<Typography
-							className={ 'product-cart__total_price' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							{ `${ calculateTotalPrice( cartData ) } SEK` }
-						</Typography>
-					</div>
-					
-					<div className={ 'product-cart__vat' }>
-						<Typography
-							className={ 'product-cart__vat_title' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							Summa (exkl. moms)
-						</Typography>
-						<Typography
-							className={ 'product-cart__vat_price' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							{ `${ calculateTotalPrice( cartData ) } ` }
-							<span>SEK</span>
-						</Typography>
-					</div>
-					
-					<div className={ 'product-cart__vat' }>
-						<Typography
-							className={ 'product-cart__vat_title' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							Moms
-						</Typography>
-						<Typography
-							className={ 'product-cart__vat_price' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							{ `${ calculateTotalPrice( cartData ) } ` }
-							<span>SEK</span>
-						</Typography>
-					</div>
-					
-					<div className={ 'product-cart__vat' }>
-						<Typography
-							className={ 'product-cart__vat_title' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							Frakt
-						</Typography>
-						<Typography
-							className={ 'product-cart__vat_price' }
-							variant={ 'body_1_large' }
-							type={ 'p' }>
-							{ `${ calculateTotalPrice( cartData ) } ` }
-							<span>SEK</span>
-						</Typography>
-					</div>
+					<CartTotal cartData={ cartData }/>
 					
 					<Button type={ 'button_2' }
 					        title={ 'Till checkout' }

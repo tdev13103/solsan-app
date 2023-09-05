@@ -11,5 +11,9 @@ export async function productsSettings() {
 		},
 	} );
 	
-	return data?.products?.nodes;
+	return {
+		products        : data?.products?.nodes,
+		shippingMethods : data?.shippingMethods?.nodes,
+		taxRates        : data?.taxRates?.nodes
+	};
 }
