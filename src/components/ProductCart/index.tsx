@@ -286,7 +286,7 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                 ],
                 "intent": "buy",
                 "merchant_urls": {
-                    "authorization": "https://api.klarna.com/payments/v1/authorization"
+                    "authorization": "https://api.playground.klarna.com/payments/v1/authorization"
                 }
             }
         )

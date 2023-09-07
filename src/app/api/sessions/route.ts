@@ -6,14 +6,14 @@ export async function POST(req: Request) {
         const body = await req.json();
 
         if (
-            !process.env.KLARNA_API_URL ||
-            !process.env.KLARNA_API_USERNAME ||
-            !process.env.KLARNA_API_PASSWORD
+            !process.env.KLARNA_API_URL_DEV ||
+            !process.env.KLARNA_API_USERNAME_DEV ||
+            !process.env.KLARNA_API_PASSWORD_DEV
         ) {
             return NextResponse.error();
         }
 
-        const tokenEndpoint = `${process.env.KLARNA_API_URL}/sessions`;
+        const tokenEndpoint = `${process.env.KLARNA_API_URL_DEV}/sessions`;
 
         try {
             const response = await axios.post(
@@ -21,8 +21,8 @@ export async function POST(req: Request) {
                 body,
                 {
                     auth: {
-                        username: process.env.KLARNA_API_USERNAME,
-                        password: process.env.KLARNA_API_PASSWORD,
+                        username: process.env.KLARNA_API_USERNAME_DEV,
+                        password: process.env.KLARNA_API_PASSWORD_DEV,
                     },
                 }
             );
