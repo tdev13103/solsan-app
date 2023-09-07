@@ -302,10 +302,13 @@ const Header: React.FC<HeaderActionProps> = ( { links } ) => {
 					        type={ headerButtonType }
 					/>
 					
-					<Link href={ '/varukorg' } className="site-header__cart_button">
-						<ShoppingBag/>
-						<span className={ `site-header__cart_items` }>{ totalQuantity }</span>
-					</Link>
+					{
+						!!totalQuantity &&
+            <Link href={ '/varukorg' } className="site-header__cart_button">
+              <ShoppingBag/>
+              <span className={ `site-header__cart_items` }>{ totalQuantity }</span>
+            </Link>
+					}
 				</div>
 				
 				<button onClick={ () => setIsMobileMenuOpen( true ) } className={ 'site-header__hamburger' }>

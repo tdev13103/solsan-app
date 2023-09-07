@@ -1,6 +1,6 @@
 'use client'
 
-import React, { FC, useRef, useState } from 'react';
+import React, { FC, useState } from 'react';
 import styled from '@emotion/styled';
 import Typography from '../UI/Typography';
 import Container from '../Container';
@@ -122,43 +122,6 @@ const Wrapper = styled.div`
 			margin-bottom: ${ theme.spaces.small };
 		}
 		
-		&__installation-wrap {
-			margin-left: 0;
-			margin-bottom: ${ theme.spaces.small };
-		}
-		
-		&__installation {
-			display: none;
-			
-			&:checked + .product-offer__installation__field-label:after {
-				background: url(data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMjIxNTUxIiB2ZXJzaW9uPSIxLjEiIGlkPSJDYXBhXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiICB3aWR0aD0iODAwcHgiIGhlaWdodD0iODAwcHgiIHZpZXdCb3g9IjAgMCA3OC4zNjkgNzguMzY5IiB4bWw6c3BhY2U9InByZXNlcnZlIj48Zz48cGF0aCBkPSJNNzguMDQ5LDE5LjAxNUwyOS40NTgsNjcuNjA2Yy0wLjQyOCwwLjQyOC0xLjEyMSwwLjQyOC0xLjU0OCwwTDAuMzIsNDAuMDE1Yy0wLjQyNy0wLjQyNi0wLjQyNy0xLjExOSwwLTEuNTQ3bDYuNzA0LTYuNzA0YzAuNDI4LTAuNDI3LDEuMTIxLTAuNDI3LDEuNTQ4LDBsMjAuMTEzLDIwLjExMmw0MS4xMTMtNDEuMTEzYzAuNDI5LTAuNDI3LDEuMTItMC40MjcsMS41NDgsMGw2LjcwMyw2LjcwNEM3OC40NzcsMTcuODk0LDc4LjQ3NywxOC41ODYsNzguMDQ5LDE5LjAxNXoiLz48L2c+PC9zdmc+) center center no-repeat;
-				background-size: calc(100% - 5px) auto;
-			}
-		}
-		
-		&__installation__field-label {
-			padding-left: ${ theme.spaces.gridGap2 };
-			position: relative;
-			z-index: 1;
-			color: ${ theme.colors.colorNavyLight };
-			cursor: pointer;
-			font-size: 18px;
-			margin-bottom: ${ theme.spaces.small };
-			
-			&:after {
-				position: absolute;
-				content: '';
-				display: block;
-				left: 0;
-				top: -3px;
-				width: 18px;
-				height: 18px;
-				z-index: 1;
-				border-radius: 3px;
-				border: 2px solid #221551;
-			}
-		}
-		
 		&__p-label {
 			max-width: max-content;
 			color: #221551;
@@ -207,12 +170,10 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 	] = useDisclosure( false );
 	
 	const [selectedProductId, setSelectedProductId] = useState( 0 )
-	const [installationValues, setInstallationValues] = useState<Array<{ id: string; checked: boolean }>>( [] );
 	
-	const selectedProducts = productsSettings?.products.filter( product => product_repeater?.some( item => item?.product_item === product?.productId ) )
+	const selectedProducts = productsSettings?.products
+	                                         .filter( product => product_repeater?.some( item => item?.product_item === product?.productId ) )
 	                                         .reverse()
-	
-	const ref = useRef<(HTMLInputElement | null)[]>( Array( selectedProducts?.length ).fill( null ) );
 	
 	const addToCart = ( event: Event, productId: number ) => {
 		event.preventDefault();
@@ -233,23 +194,6 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 		
 		dispatch( setCartState( cartItem ) );
 		close();
-	}
-	
-	
-	const handleClick = ( index: number ) => {
-		const inputElement = ref.current[index];
-		if ( inputElement ) {
-			const id = inputElement.id;
-			const checked = inputElement.checked;
-			
-			const newInstallationValues = [...installationValues];
-			newInstallationValues[index] = {
-				id,
-				checked
-			};
-			
-			setInstallationValues( newInstallationValues );
-		}
 	}
 	
 	const openProductModal = ( event: Event, productId: number ) => {
@@ -332,25 +276,6 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 										{ priceInclVatLabel }
 									</Typography>
 									{
-										item?.woocommerceProductSettings?.displayVatTitle &&
-                    <>
-                      <input
-                        id={ `installation-${ index }` }
-                        className={ `product-offer__installation` }
-                        name='installation'
-                        type='checkbox'
-                        ref={ el => ref.current[index] = el }
-                        defaultChecked={ installationValues[index]?.checked || false }
-                        onClick={ () => handleClick( index ) }
-                      />
-                      <label
-                        htmlFor={ `installation-${ index }` }
-                        className={ `product-offer__installation__field-label` }
-                        dangerouslySetInnerHTML={ { __html : 'Intresserad av installation' } }
-                      />
-                    </>
-									}
-									{
 										item.woocommerceProductSettings?.productCardLabel &&
                     <Typography
                       className={ 'product-offer__p-label' }
@@ -380,8 +305,8 @@ const ProductOffer: FC<ProductOfferProps> = ( {
 					}
 				</GridSystem>
 			</Container>
-			<ProductModal close={ close } opened={ opened } addToCart={ addToCart } installationValues={ installationValues }
-			              selectedProducts={ selectedProducts } productId={ selectedProductId }/>
+			<ProductModal close={ close } opened={ opened } addToCart={ addToCart } selectedProducts={ selectedProducts }
+			              productId={ selectedProductId }/>
 		</Wrapper>
 	);
 };

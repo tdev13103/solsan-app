@@ -40,7 +40,9 @@ export default async function RootLayout( { children }: { children: React.ReactN
 	
 	return (
 		<html lang="en-US" className={ poppins.className }>
-		<head></head>
+		<head>
+			<script type="text/javascript" src="https://x.klarnacdn.net/kp/lib/v1/api.js" async></script>
+		</head>
 		<body>
 		<Providers>
 			<ThemeContextProvider value={ themeOptions } isMobile={ isMobileView }>
