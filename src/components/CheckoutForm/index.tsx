@@ -30,7 +30,7 @@ const CheckoutForm = () => {
                 container: '#klarna-payments-container',
                 payment_method_categories: paymentMethodIdentifiers,
                 instance_id: sessionData?.session_id
-            }, (res) => {
+            }, (res: any) => {
                 console.log('res', res);
             });
 
@@ -78,7 +78,7 @@ const CheckoutForm = () => {
             "merchant_urls": {
                 "authorization": "https://api.klarna.com/payments/v1/authorization"
             }
-        }, (res) => {
+        }, (res: any) => {
             console.log('authorization', res);
         })
     }
