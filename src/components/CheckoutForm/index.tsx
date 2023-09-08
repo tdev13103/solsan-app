@@ -2,6 +2,10 @@
 
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
+import styled from "@emotion/styled";
+import theme from "@/styles/theme";
+import Button from "@/components/Button";
+import {useRouter} from "next/navigation";
 
 type SessionData = {
     client_token: string;
@@ -24,6 +28,16 @@ type ProductObject = {
     unit_price: "" | undefined | number
 };
 
+const Wrapper = styled.div`
+  padding-bottom: ${theme.spaces.large19};
+
+  .product-cart {
+    &__authorize {
+      margin-top: ${theme.spaces.small};
+    }
+  }
+`
+
 const initializeKlarnaPayments = (sessionData: SessionData) => {
     const paymentMethodIdentifiers = sessionData?.payment_method_categories?.map((method) => method.identifier);
     if (typeof window !== 'undefined') {
@@ -41,17 +55,24 @@ const initializeKlarnaPayments = (sessionData: SessionData) => {
 };
 const CheckoutForm = () => {
 
-    const [orderData, setOrderData] = useState()
+    // const [orderDataTest, setOrderData] = useState()
     const [productObject, setProductObject] = useState<ProductObject[]>()
+
+    const router = useRouter()
 
     useEffect(() => {
         const sessionDataJson: string | null = localStorage.getItem('sessionData')
         const productObjectJson: string | null = localStorage.getItem('SolsamPaymentData')
+        // const orderDataJson: string | null = localStorage.getItem('setOrderData')
         const sessionData: SessionData = sessionDataJson && JSON.parse(sessionDataJson)
 
         if (productObjectJson) {
             setProductObject(JSON.parse(productObjectJson))
         }
+
+        // if (orderDataJson) {
+        //     setOrderData(JSON.parse(orderDataJson))
+        // }
 
         initializeKlarnaPayments(sessionData)
     }, [])
@@ -71,7 +92,10 @@ const CheckoutForm = () => {
                     const response = await axios.post('/api/get-order', JSON.stringify(data?.order_id));
 
                     const {orderData} = response.data;
-                    setOrderData(orderData)
+                    console.log('orderData', orderData);
+                    router.push('/tacksida')
+                    // setOrderData(orderData)
+                    // localStorage.setItem('setOrderData', JSON.stringify(orderData))
                 } catch (error) {
                     console.log('error', error);
                 }
@@ -81,17 +105,35 @@ const CheckoutForm = () => {
             }
         })
     }
-
-    console.log('orderData', orderData);
     // const onSubmit = async () => {
+    //     const {
+    //         billing_address,
+    //         email,
+    //         phone,
+    //         order_lines,
+    //         order_amount,
+    //         klarna_reference
+    //     } = orderDataTest;
     //     const dataOrder = JSON.stringify({
-    //         payment_method: orderData?.initial_payment_method?.type,
-    //         payment_method_title: orderData?.initial_payment_method?.description,
-    //         set_paid: false,
-    //         meta_data: orderData?.order_lines,
-    //         billing: orderData?.billing_address,
-    //         line_items: orderData?.order_lines,
-    //         customer_id: 12,
+    //         payment_method: 'klarna',
+    //         payment_method_title: 'Klarna',
+    //         customer_id: 0,
+    //         billing: {
+    //             first_name: billing_address.given_name,
+    //             email: email,
+    //             phone: phone,
+    //         },
+    //         line_items: order_lines.map(item => ({
+    //             product_id: 0,
+    //             quantity: item.quantity,
+    //             name: item?.name,
+    //             price: item.unit_price,
+    //             image_url: item.image_url
+    //         })),
+    //         meta_data: [],
+    //         order_total: order_amount / 100,
+    //         order_status: 'processing',
+    //         klarna_reference: klarna_reference,
     //     })
     //
     //     try {
@@ -105,11 +147,15 @@ const CheckoutForm = () => {
     // }
 
     return (
-        <div>
+        <Wrapper>
             <div id="klarna-payments-container"></div>
-            <button onClick={() => authorize()}>create order into klarna</button>
+            <Button type={'button_2'}
+                    title={'Betala köp'}
+                    isHyperlink={false}
+                    onClick={authorize}
+                    className={'product-cart__authorize'}/>
             {/*<button onClick={() => onSubmit()}>create order into woo</button>*/}
-        </div>
+        </Wrapper>
     );
 };
 
