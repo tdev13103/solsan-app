@@ -206,6 +206,7 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
     const installation: boolean | undefined = useAppSelector(state => state.cartReducer.installationProduct.installation);
 
     const [totalPrice, setTotalPrice] = useState<number>(0)
+    console.log('totalPrice', totalPrice);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const ref = useRef<(HTMLInputElement | null)>(null);

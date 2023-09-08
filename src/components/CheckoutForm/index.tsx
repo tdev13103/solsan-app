@@ -110,26 +110,26 @@ const CheckoutForm = () => {
     }
 
     console.log('orderData', orderData);
-    const onSubmit = async () => {
-        const dataOrder = JSON.stringify({
-            payment_method: orderData?.initial_payment_method?.type,
-            payment_method_title: orderData?.initial_payment_method?.description,
-            set_paid: false,
-            meta_data: orderData?.order_lines,
-            billing: orderData?.billing_address,
-            line_items: orderData?.order_lines,
-            customer_id: 12,
-        })
-
-        try {
-            const response = await axios.post('/api/create-order', dataOrder);
-
-            const {orderData} = response.data;
-            console.log('orderData111', orderData);
-        } catch (error) {
-            console.log('error', error);
-        }
-    }
+    // const onSubmit = async () => {
+    //     const dataOrder = JSON.stringify({
+    //         payment_method: orderData?.initial_payment_method?.type,
+    //         payment_method_title: orderData?.initial_payment_method?.description,
+    //         set_paid: false,
+    //         meta_data: orderData?.order_lines,
+    //         billing: orderData?.billing_address,
+    //         line_items: orderData?.order_lines,
+    //         customer_id: 12,
+    //     })
+    //
+    //     try {
+    //         const response = await axios.post('/api/create-order', dataOrder);
+    //
+    //         const {orderData} = response.data;
+    //         console.log('orderData111', orderData);
+    //     } catch (error) {
+    //         console.log('error', error);
+    //     }
+    // }
 
     return (
         <div>
