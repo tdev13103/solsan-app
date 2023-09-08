@@ -214,7 +214,8 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
     const installation: boolean | undefined = useAppSelector(state => state.cartReducer.installationProduct.installation);
 
     const [totalPrice, setTotalPrice] = useState<number>(0)
-    const [taxAndRateValue, setTaxAndRateValue] = useState<number>(0)
+    const [shippingValue, setShippingValue] = useState<number>(0)
+    const [VATValue, setVATValue] = useState<number>(0)
 
     const dispatch = useAppDispatch();
     const router = useRouter();
@@ -277,11 +278,18 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
             unit_price: item.price && parseInt(item.price.replace(/\s/g, ''), 10) * 100,
         }))
         newCartData.push({
-            "name": 'Tax and VAT',
-            "quantity": 1,
-            "total_amount": taxAndRateValue,
-            "unit_price": taxAndRateValue
-        })
+                "name": 'Frakt',
+                "quantity": 1,
+                "total_amount": shippingValue,
+                "unit_price": shippingValue
+            },
+            {
+                "name": 'Moms',
+                "quantity": 1,
+                "total_amount": VATValue,
+                "unit_price": VATValue
+            }
+        )
         const paymentData = JSON.stringify({
                 "locale": "en-SE",
                 "purchase_country": "SE",
@@ -427,7 +435,7 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                     </div>
 
                     <CartTotal cartData={cartData} setTotalPrice={setTotalPrice}
-                               setTaxAndRateValue={setTaxAndRateValue}/>
+                               setShippingValue={setShippingValue} setVATValue={setVATValue}/>
 
                     <Button type={'button_2'}
                             title={'Till checkout'}
