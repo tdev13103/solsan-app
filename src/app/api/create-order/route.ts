@@ -7,23 +7,17 @@ export async function POST(req: Request) {
 
         if (
             !process.env.NEXT_PUBLIC_WORDPRESS_API_URL ||
-            !process.env.NEXT_PUBLIC_CREATE_ORDER ||
-            !process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET
+            !process.env.NEXT_PUBLIC_SET_COMPLETED_ORDER
         ) {
             return NextResponse.error();
         }
 
         const tokenEndpoint =
             process.env.NEXT_PUBLIC_WORDPRESS_API_URL +
-            process.env.NEXT_PUBLIC_CREATE_ORDER;
+            process.env.NEXT_PUBLIC_SET_COMPLETED_ORDER;
 
         try {
-            const response = await axios.post(tokenEndpoint, body, {
-                auth: {
-                    username: process.env.CONSUMER_KEY,
-                    password: process.env.CONSUMER_SECRET,
-                },
-            });
+            const response = await axios.post(tokenEndpoint, body);
 
             return NextResponse.json({
                 success: true,

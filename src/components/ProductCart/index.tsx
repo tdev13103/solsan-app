@@ -41,6 +41,14 @@ type CartItem = {
     equipment: string;
 };
 
+type NewCartItem = {
+    quantity: number;
+    total_amount: "" | undefined | number;
+    image_url?: string;
+    name: string | undefined;
+    unit_price: "" | undefined | number
+};
+
 const Wrapper = styled.div`
   padding-bottom: ${theme.spaces.large19};
 
@@ -206,7 +214,8 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
     const installation: boolean | undefined = useAppSelector(state => state.cartReducer.installationProduct.installation);
 
     const [totalPrice, setTotalPrice] = useState<number>(0)
-    console.log('totalPrice', totalPrice);
+    const [taxAndRateValue, setTaxAndRateValue] = useState<number>(0)
+
     const dispatch = useAppDispatch();
     const router = useRouter();
     const ref = useRef<(HTMLInputElement | null)>(null);
@@ -260,44 +269,32 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
     };
 
     const handleCheckout = async () => {
+        const newCartData: NewCartItem[] = cartData.map(item => ({
+            image_url: item.image.sourceUrl,
+            name: item.name,
+            quantity: item.quantity,
+            total_amount: item.price && parseInt(item.price.replace(/\s/g, ''), 10) * item.quantity * 100,
+            unit_price: item.price && parseInt(item.price.replace(/\s/g, ''), 10) * 100,
+        }))
+        newCartData.push({
+            "name": 'Tax and VAT',
+            "quantity": 1,
+            "total_amount": taxAndRateValue,
+            "unit_price": taxAndRateValue
+        })
         const paymentData = JSON.stringify({
                 "locale": "en-SE",
                 "purchase_country": "SE",
                 "purchase_currency": "SEK",
-                "order_amount": 2000,
-                "order_lines": [
-                    {
-                        "image_url": "https://www.exampleobjects.com/logo.png",
-                        "merchant_data": "{\"customer_account_info\":[{\"unique_account_identifier\":\"test@gmail.com\",\"account_registration_date\":\"2017-02-13T10:49:20Z\",\"account_last_modified\":\"2019-03-13T11:45:27Z\"}]}",
-                        "name": "Running shoe",
-                        "product_identifiers": {
-                            "brand": "shoe-brand",
-                            "category_path": "Shoes > Running",
-                            "global_trade_item_number": "4912345678904",
-                            "manufacturer_part_number": "AD6654412-334.22",
-                            "color": "white",
-                            "size": "small"
-                        },
-                        "product_url": "https://.../AD6654412.html",
-                        "quantity": 1,
-                        "quantity_unit": "pcs",
-                        "reference": "AD6654412",
-                        "tax_rate": 2000,
-                        "total_amount": 2000,
-                        "total_discount_amount": 500,
-                        "total_tax_amount": 333,
-                        "type": "physical",
-                        "unit_price": 2500,
-                        "subscription": {
-                            "name": "string",
-                            "interval": "DAY",
-                            "interval_count": 1
-                        }
-                    }
-                ],
+                "order_amount": totalPrice * 100,
+                "order_lines": newCartData,
                 "intent": "buy",
+                "merchant_urls": {
+                    "authorization": "https://api.playground.klarna.com/payments/v1/authorization"
+                }
             }
         )
+        localStorage.setItem('SolsamPaymentData', paymentData)
 
         try {
             const response = await axios.post('/api/sessions', paymentData);
@@ -429,7 +426,8 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                         }
                     </div>
 
-                    <CartTotal cartData={cartData} setTotalPrice={setTotalPrice}/>
+                    <CartTotal cartData={cartData} setTotalPrice={setTotalPrice}
+                               setTaxAndRateValue={setTaxAndRateValue}/>
 
                     <Button type={'button_2'}
                             title={'Till checkout'}

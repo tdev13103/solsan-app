@@ -21,6 +21,7 @@ interface CartItem {
 interface CartTotalProps {
     cartData: CartItem[];
     setTotalPrice?: Dispatch<SetStateAction<number>>;
+    setTaxAndRateValue?: Dispatch<SetStateAction<number>>;
 }
 
 type Vat = number | "" | undefined
@@ -70,7 +71,7 @@ const Wrapper = styled.div`
   }
 `
 
-const CartTotal: FC<CartTotalProps> = ({cartData, setTotalPrice}) => {
+const CartTotal: FC<CartTotalProps> = ({cartData, setTotalPrice, setTaxAndRateValue}) => {
     const {
         productsSettings: {
             shippingMethods,
@@ -98,12 +99,14 @@ const CartTotal: FC<CartTotalProps> = ({cartData, setTotalPrice}) => {
     const totalPrice = calculateTotalPrice(cartData);
     const productVat = taxRate && totalPrice * (parseFloat(taxRate) / 100)
     const totalPriceWithTaxAndRate = calculateTotalPrice(cartData, shippingMethodCost, productVat);
+    const taxAndRateValue = (totalPriceWithTaxAndRate - totalPrice) * 100;
 
     useEffect(() => {
-        if (setTotalPrice) {
+        if (setTotalPrice && setTaxAndRateValue) {
             setTotalPrice(totalPriceWithTaxAndRate)
+            setTaxAndRateValue(taxAndRateValue)
         }
-    }, [setTotalPrice, totalPriceWithTaxAndRate])
+    }, [setTaxAndRateValue, setTotalPrice, taxAndRateValue, totalPriceWithTaxAndRate])
 
     return (
         <Wrapper>

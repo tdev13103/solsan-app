@@ -170,14 +170,13 @@ const ProductOffer: FC<ProductOfferProps> = ({
         .reverse()
     const installationProduct = productsSettings?.products.find(product => product?.slug === "installation")
 
-    console.log('installationProduct', installationProduct);
+
     const addToCart = (event: Event, productId: number) => {
         event.preventDefault();
         const currentProduct = selectedProducts.find(product => product?.productId === productId);
         const numericPrice = currentProduct?.price?.replace(/[^\d,.]/g, '')?.split('.')[0]?.replace(/,/g, ' ');
         const numericInstallationPrice = installationProduct?.price?.replace(/[^\d,.]/g, '')?.split('.')[0]?.replace(/,/g, ' ');
-        console.log('numericPrice', numericPrice);
-        console.log('numericInstallationPrice', numericInstallationPrice);
+
         const cartItem: CartItem = {
             id: productId,
             quantity: 1,
