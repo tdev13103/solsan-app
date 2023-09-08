@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import {Modal} from "@mantine/core";
 import Typography from "@/components/UI/Typography";
 import Button from "@/components/Button";
@@ -6,6 +6,8 @@ import styled from "@emotion/styled";
 import theme from "@/styles/theme";
 import {useThemeContext} from "@/context/theme.context";
 import TextWithMoreButton from "@/components/TextWithMoreButton";
+import {useAppDispatch} from "@/redux/hooks";
+import {setInstallationProduct} from "@/redux/features/cartActions";
 
 interface ProductsSettings {
     content: string;
@@ -165,28 +167,23 @@ const ProductModal: FC<ProductModalProps> = ({
         return product;
     });
 
+    const dispatch = useAppDispatch()
+
     const currentProduct = selectedProductsWithIndex.find(product => product?.productId === productId);
-    // const currentIndex = currentProduct && currentProduct?.index !== undefined ? currentProduct?.index : -1;
 
-    // const [installationValues, setInstallationValues] = useState<Array<{ id: string; checked: boolean }>>( [] );
+    const [installationValue, setInstallationValue] = useState<boolean>(false);
 
-    // const ref = useRef<(HTMLInputElement | null)[]>( Array( selectedProducts?.length ).fill( null ) );
+    const ref = useRef<(HTMLInputElement | null)>(null);
 
-    // const handleClick = ( index: number ) => {
-    // 	const inputElement = ref.current[index];
-    // 	if ( inputElement ) {
-    // 		const id = inputElement.id;
-    // 		const checked = inputElement.checked;
-    //
-    // 		const newInstallationValues = [...installationValues];
-    // 		newInstallationValues[index] = {
-    // 			id,
-    // 			checked
-    // 		};
-    //
-    // 		setInstallationValues( newInstallationValues );
-    // 	}
-    // }
+    const handleClick = () => {
+        const inputElement = ref.current;
+        if (inputElement) {
+            setInstallationValue(!inputElement?.checked);
+        }
+        dispatch(setInstallationProduct({
+            installation: installationValue
+        }))
+    }
 
     return (
         <Modal opened={opened} onClose={close} centered
@@ -211,16 +208,17 @@ const ProductModal: FC<ProductModalProps> = ({
                     </Typography>
                     {
                         productModal?.referenceCheckboxLabel &&
-						<div>
-							<input id={'installation'}
-							       className={`product-modal__installation`}
-							       name='installation'
-							       type='checkbox'
-							/>
-							<label htmlFor={`installation`}
-							       className={`product-modal__installation_field-label`}
-							       dangerouslySetInnerHTML={{__html: productModal?.referenceCheckboxLabel}}/>
-						</div>
+                        <div onClick={handleClick}>
+                            <input id={'installation'}
+                                   className={`product-modal__installation`}
+                                   name='installation'
+                                   ref={ref}
+                                   type='checkbox'
+                            />
+                            <label htmlFor={`installation`}
+                                   className={`product-modal__installation_field-label`}
+                                   dangerouslySetInnerHTML={{__html: productModal?.referenceCheckboxLabel}}/>
+                        </div>
                     }
                 </div>
                 {
@@ -247,10 +245,10 @@ const ProductModal: FC<ProductModalProps> = ({
                     </Typography>
                     {
                         currentProduct &&
-						<Typography
-							className={'product-modal__product_equipment'}
-							variant={'body_1_large'}
-							dangerouslySetInnerHTML={{__html: currentProduct.woocommerceProductSettings.productEquipment}}/>
+                        <Typography
+                            className={'product-modal__product_equipment'}
+                            variant={'body_1_large'}
+                            dangerouslySetInnerHTML={{__html: currentProduct.woocommerceProductSettings.productEquipment}}/>
                     }
                 </div>
                 <div className={'product-modal__buttons'}>

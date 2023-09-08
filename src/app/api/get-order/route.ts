@@ -3,25 +3,26 @@ import axios from "axios";
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json();
+        const orderId = await req.json();
 
         if (
-            !process.env.NEXT_PUBLIC_WORDPRESS_API_URL ||
-            !process.env.NEXT_PUBLIC_CREATE_ORDER ||
-            !process.env.CONSUMER_KEY || !process.env.CONSUMER_SECRET
+            !process.env.KLARNA_API_ORDER_URL_DEV ||
+            !process.env.KLARNA_API_USERNAME_DEV ||
+            !process.env.KLARNA_API_PASSWORD_DEV
         ) {
             return NextResponse.error();
         }
 
-        const tokenEndpoint =
-            process.env.NEXT_PUBLIC_WORDPRESS_API_URL +
-            process.env.NEXT_PUBLIC_CREATE_ORDER;
+        const tokenEndpoint = `${process.env.KLARNA_API_ORDER_URL_DEV}/${orderId}`;
 
         try {
-            const response = await axios.post(tokenEndpoint, body, {
+            const response = await axios.get(tokenEndpoint, {
+                headers: {
+                    'Klarna-Integrator': 'string'
+                },
                 auth: {
-                    username: process.env.CONSUMER_KEY,
-                    password: process.env.CONSUMER_SECRET,
+                    username: process.env.KLARNA_API_USERNAME_DEV,
+                    password: process.env.KLARNA_API_PASSWORD_DEV,
                 },
             });
 

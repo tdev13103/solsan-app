@@ -1,5 +1,5 @@
 'use client'
-import React, {FC, useState} from 'react';
+import React, {FC, useRef, useState} from 'react';
 import styled from "@emotion/styled";
 import theme from "@/styles/theme";
 import Typography from "@/components/UI/Typography";
@@ -9,7 +9,7 @@ import Container from "@/components/Container";
 import Image from "next/image";
 import Minus from "@/components/Icons/Minus";
 import Plus from "@/components/Icons/Plus";
-import {deleteCartItem, updateCartItem} from "@/redux/features/cartActions";
+import {deleteCartItem, setInstallationProduct, updateCartItem} from "@/redux/features/cartActions";
 import Link from "next/link";
 import RemoveProduct from "@/components/Icons/RemoveProduct";
 import Button from "@/components/Button";
@@ -203,11 +203,21 @@ const Wrapper = styled.div`
 const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => {
     const {themeSettings: {productModal}} = useThemeContext()
     const cartData: CartItem[] = useAppSelector(state => state?.cartReducer?.items);
+    const installation: boolean | undefined = useAppSelector(state => state.cartReducer.installationProduct.installation);
 
     const [totalPrice, setTotalPrice] = useState<number>(0)
-    console.log('totalPrice', totalPrice);
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const ref = useRef<(HTMLInputElement | null)>(null);
+
+    const handleClick = () => {
+        const inputElement = ref.current;
+        if (inputElement) {
+            dispatch(setInstallationProduct({
+                installation: inputElement?.checked
+            }))
+        }
+    }
 
 
     const updateCartItems = (productId: number, operation: 'add' | 'remove') => {
@@ -285,9 +295,6 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                     }
                 ],
                 "intent": "buy",
-                "merchant_urls": {
-                    "authorization": "https://api.playground.klarna.com/payments/v1/authorization"
-                }
             }
         )
 
@@ -349,10 +356,10 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                                             </Typography>
                                             {
                                                 item?.equipment &&
-												<Typography
-													className={'product-cart__p_equipment'}
-													variant={'body_1_large'}
-													dangerouslySetInnerHTML={{__html: item?.equipment}}/>
+                                                <Typography
+                                                    className={'product-cart__p_equipment'}
+                                                    variant={'body_1_large'}
+                                                    dangerouslySetInnerHTML={{__html: item?.equipment}}/>
                                             }
                                             <div className={'product-cart__quantity_wrap'}>
                                                 <button className={'product-cart__quantity_btn'}
@@ -375,12 +382,12 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                                     <div className={'product-cart__price-wrap'}>
                                         {
                                             item?.price &&
-											<Typography
-												className={'product-cart__price'}
-												variant={'body_1_large'}
-												type={'p'}>
+                                            <Typography
+                                                className={'product-cart__price'}
+                                                variant={'body_1_large'}
+                                                type={'p'}>
                                                 {item?.price}
-											</Typography>
+                                            </Typography>
                                         }
                                         <Typography
                                             className={'product-cart__currency'}
@@ -406,16 +413,18 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                         </Typography>
                         {
                             productModal?.referenceCheckboxLabel &&
-							<div>
-								<input id={'installation'}
-								       className={`product-cart__installation`}
-								       name='installation'
-								       type='checkbox'
-								/>
-								<label htmlFor={`installation`}
-								       className={`product-cart__installation_field-label`}
-								       dangerouslySetInnerHTML={{__html: productModal?.referenceCheckboxLabel}}/>
-							</div>
+                            <div onClick={handleClick}>
+                                <input id={'installation'}
+                                       className={`product-cart__installation`}
+                                       name='installation'
+                                       ref={ref}
+                                       type='checkbox'
+                                       defaultChecked={installation}
+                                />
+                                <label htmlFor={`installation`}
+                                       className={`product-cart__installation_field-label`}
+                                       dangerouslySetInnerHTML={{__html: productModal?.referenceCheckboxLabel}}/>
+                            </div>
                         }
                     </div>
 
