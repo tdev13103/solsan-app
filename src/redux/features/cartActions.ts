@@ -13,14 +13,14 @@ type CartItem = {
     equipment: string;
 };
 
-interface installationProductProps {
+type InstallationProductProps ={
     installation?: boolean;
     price?: string;
 }
 
 type InitialStateType = {
     items: CartItem[];
-    installationProduct: installationProductProps
+    installationProduct: InstallationProductProps
 
 };
 
@@ -37,23 +37,6 @@ export const cart = createSlice({
     name: "cart",
     initialState,
     reducers: {
-
-        setInstallationProduct: (state, action: PayloadAction<installationProductProps>) => {
-            const updatedInstallationProduct = {...state.installationProduct};
-
-            if (action.payload.installation !== undefined) {
-                updatedInstallationProduct.installation = action.payload.installation;
-            }
-
-            if (action.payload.price !== undefined) {
-                updatedInstallationProduct.price = action.payload.price;
-            }
-
-            state.installationProduct = updatedInstallationProduct;
-
-            saveToLocalStorage("SolsamCartInstallationProduct", updatedInstallationProduct);
-        },
-
         setCartState: (state, action: PayloadAction<CartItem>) => {
             const {
                 id,
@@ -106,6 +89,21 @@ export const cart = createSlice({
         addMultipleItems: (state, action: PayloadAction<CartItem[]>) => {
             state.items = [...state.items, ...action.payload];
             saveToLocalStorage("SolsamCartItems", state.items);
+        },
+        setInstallationProduct: (state, action: PayloadAction<InstallationProductProps>) => {
+            const updatedInstallationProduct = {...state.installationProduct};
+
+            if (action.payload.installation !== undefined) {
+                updatedInstallationProduct.installation = action.payload.installation;
+            }
+
+            if (action.payload.price !== undefined) {
+                updatedInstallationProduct.price = action.payload.price;
+            }
+
+            state.installationProduct = updatedInstallationProduct;
+
+            saveToLocalStorage("SolsamCartInstallationProduct", updatedInstallationProduct);
         },
     },
 });
