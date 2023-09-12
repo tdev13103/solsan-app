@@ -140,7 +140,7 @@ const Wrapper = styled.div`
 const ProductCheckout: FC<ProductCheckoutProps> = ({data: {pageAdditionalSettings}}) => {
     const cartData: CartItem[] = useAppSelector(state => state?.cartReducer?.items);
     const installationProduct: InstallationProduct | null = useAppSelector(state => state.installationProductReducer.item);
-console.log('installationProduct?.installation', installationProduct?.installation);
+
     return (
         <Wrapper className={`${pageAdditionalSettings?.isItGeneralPage ? 'page-without-banner' : ''}`}>
             <Container>

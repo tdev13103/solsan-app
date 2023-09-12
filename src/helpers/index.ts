@@ -22,7 +22,7 @@ export const extractRepeaterFields = (data: any): { [key: string]: any } => {
         const repeaterKey = startIndex[0];
         const fieldKey = startIndex[1];
 
-        if (fieldKey?.includes("repeater") || fieldKey?.includes("items") || fieldKey?.includes("sections")) {
+        if (fieldKey?.includes("repeater") || fieldKey?.includes("items") || fieldKey?.includes("sections") || fieldKey?.includes("usp_cards")) {
             const subMatches = fieldKey.match(/\d+/);
             const subNumber = subMatches?.[0] || null;
             const subStartIndex = fieldKey.indexOf(`_${subNumber}_`);
@@ -57,7 +57,7 @@ export const extractRepeaterFields = (data: any): { [key: string]: any } => {
     };
 
     const repeaterFields = Object.keys(data)
-        .filter((key) => key.includes("repeater") || key.includes("items") || key.includes("sections"));
+        .filter((key) => key.includes("repeater") || key.includes("items") || key.includes("sections") || key.includes("usp_cards"));
     processRepeaterFields(repeaterFields, result);
 
     return result;

@@ -35,7 +35,7 @@ const Wrapper = styled.div`
   &.top {
     margin: ${theme.spaces.medium3} 0 0;
   }
-  
+
   .cart-total {
 
     &__total {
@@ -117,7 +117,7 @@ const CartTotal: FC<CartTotalProps> = ({
     } = useProductsContext()
     const pathname = usePathname()
 
-    const marginTopClass = pathname === '/till-kassan' ? 'top' : ''
+    const marginTopClass = (pathname === '/till-kassan' || pathname === '/tacksida') ? 'top' : ''
     const shippingMethodCost = shippingMethods.find(method => method?.title === 'Flat rate')?.cost;
     const taxRate = taxRates.find(rate => rate?.name === 'Tax')?.rate as string;
 

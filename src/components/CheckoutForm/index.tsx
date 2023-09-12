@@ -102,7 +102,7 @@ const CheckoutForm = () => {
                     }
 
                     // setOrderData(orderData)
-                    // localStorage.setItem('setOrderData', JSON.stringify(orderData))
+                    localStorage.setItem('setOrderData', JSON.stringify(orderData))
                 } catch (error) {
                     console.log('error', error);
                 }
