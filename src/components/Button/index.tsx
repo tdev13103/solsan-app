@@ -17,6 +17,7 @@ interface ButtonProps {
 
 const Btn = styled.button`
 	text-decoration: none;
+	font-family: inherit;
 	
 	&.btn-button_2 {
 		${ theme.buttons.button_2 }

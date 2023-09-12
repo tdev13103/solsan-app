@@ -1,4 +1,4 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {Modal} from "@mantine/core";
 import Typography from "@/components/UI/Typography";
 import Button from "@/components/Button";
@@ -7,7 +7,8 @@ import theme from "@/styles/theme";
 import {useThemeContext} from "@/context/theme.context";
 import TextWithMoreButton from "@/components/TextWithMoreButton";
 import {useAppDispatch} from "@/redux/hooks";
-import {setInstallationProduct} from "@/redux/features/cartActions";
+import {setInstallationProduct} from "@/redux/features/installationActions";
+import {getFromLocalStorage} from "@/utils/localStorageUtils";
 
 interface ProductsSettings {
     content: string;
@@ -20,6 +21,7 @@ interface ProductsSettings {
     uri: string;
     productId: number;
     price: string;
+    taxStatus: string;
     woocommerceProductSettings: {
         displayVatTitle: boolean;
         productCardLabel: string;
@@ -35,7 +37,20 @@ interface ProductModalProps {
     addToCart: (event: Event, productId: number) => void,
     selectedProducts: ProductsSettings[],
     productId: number;
+    installationProduct: ProductsSettings | undefined
 }
+
+type CartItem = {
+    name: string | undefined;
+    price: string | undefined;
+    image: {
+        sourceUrl: string;
+        title: string;
+    };
+    equipment: string;
+    installation: boolean
+    taxStatus: string;
+};
 
 const Wrapper = styled.div`
 
@@ -154,7 +169,8 @@ const ProductModal: FC<ProductModalProps> = ({
                                                  opened,
                                                  addToCart,
                                                  selectedProducts,
-                                                 productId
+                                                 productId,
+                                                 installationProduct
                                              }) => {
     const {themeSettings: {productModal}} = useThemeContext()
     const selectedProductsWithIndex = selectedProducts.map((product, index) => {
@@ -175,14 +191,35 @@ const ProductModal: FC<ProductModalProps> = ({
 
     const ref = useRef<(HTMLInputElement | null)>(null);
 
+    useEffect(() => {
+        const installationProductStorage: CartItem | null = getFromLocalStorage("SolsamInstallationProduct") || null;
+console.log('installationProduct', installationProduct);
+        if (installationProductStorage) {
+            dispatch(setInstallationProduct(installationProductStorage));
+        } else {
+            if (installationProduct) {
+                const cartItem: CartItem = {
+                    name: installationProduct?.name,
+                    price: installationProduct?.price?.replace(/[^\d,.]/g, '')?.split('.')[0]?.replace(/,/g, ' '),
+                    image: installationProduct.image,
+                    equipment: installationProduct.content,
+                    installation: false,
+                    taxStatus: installationProduct.taxStatus
+                };
+
+                dispatch(setInstallationProduct(cartItem));
+            }
+        }
+    }, [dispatch, installationProduct])
+
     const handleClick = () => {
         const inputElement = ref.current;
-        if (inputElement) {
-            setInstallationValue(!inputElement?.checked);
+        setInstallationValue(!inputElement?.checked);
+        if (installationValue) {
+            dispatch(setInstallationProduct({installation: true}));
+        } else {
+            dispatch(setInstallationProduct({installation: false}))
         }
-        dispatch(setInstallationProduct({
-            installation: installationValue
-        }))
     }
 
     return (

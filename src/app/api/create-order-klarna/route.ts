@@ -4,7 +4,6 @@ import axios from "axios";
 export async function POST(req: Request) {
     try {
         const body = await req.json();
-        const authorizationToken = body?.authorization_token
 
         if (
             !process.env.KLARNA_API_URL_DEV ||
@@ -14,10 +13,14 @@ export async function POST(req: Request) {
             return NextResponse.error();
         }
 
-        const tokenEndpoint = `${process.env.KLARNA_API_URL_DEV}/authorizations/${authorizationToken}/order`;
+
+        const tokenEndpoint = `${process.env.KLARNA_API_URL_DEV}/checkout/v3/orders`;
 
         try {
-            const response = await axios.post(tokenEndpoint, body?.body, {
+            const response = await axios.post(tokenEndpoint, body, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
                 auth: {
                     username: process.env.KLARNA_API_USERNAME_DEV,
                     password: process.env.KLARNA_API_PASSWORD_DEV,

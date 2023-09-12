@@ -13,7 +13,8 @@ import ShoppingBag from "@/components/Icons/ShoppingBag";
 import Link from "next/link";
 import {useAppDispatch, useAppSelector} from "@/redux/hooks";
 import {getFromLocalStorage} from "@/utils/localStorageUtils";
-import {addMultipleItems, setInstallationProduct} from "@/redux/features/cartActions";
+import {addMultipleItems} from "@/redux/features/cartActions";
+import {setInstallationProduct} from "@/redux/features/installationActions";
 
 interface HeaderLink {
     link: string;
@@ -28,13 +29,24 @@ interface HeaderActionProps {
 type CartItem = {
     name: string | undefined;
     id: number;
-    price: string | undefined;
+    price: string;
     quantity: number;
     image: {
         sourceUrl: string;
         title: string;
     }
     equipment: string;
+};
+
+type InstallationProduct = {
+    name?: string | undefined;
+    price?: string;
+    image?: {
+        sourceUrl: string;
+        title: string;
+    };
+    equipment?: string;
+    installation?: boolean;
 };
 
 
@@ -118,10 +130,6 @@ const HeaderMainWrapper = styled('header')`
       }
     }
 
-    &__sub-menu-list {
-
-    }
-
     &__sub-menu-wrap {
       position: absolute;
       background-color: ${theme.colors.colorWhite};
@@ -152,10 +160,6 @@ const HeaderMainWrapper = styled('header')`
       &:hover {
         background-color: ${theme.colors.colorPurpleLight};
       }
-    }
-
-    &__button {
-
     }
 
     &__logo {
@@ -207,6 +211,20 @@ const HeaderMainWrapper = styled('header')`
         border-radius: 12px;
         border: 1px solid #221551;
         margin-left: ${theme.spaces.small};
+
+        @media screen and (max-width: ${theme.responsiveMediaSizes.m1024}) {
+          margin: 0 10px 0 0;
+        }
+
+        @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+          border-radius: 6px;
+          padding: 4px;
+
+          svg {
+            width: 24px;
+            height: 24px;
+          }
+        }
       }
 
       &_items {
@@ -226,15 +244,20 @@ const HeaderMainWrapper = styled('header')`
         font-size: 12px;
         font-weight: 500;
         line-height: normal;
+
+        @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+          font-size: 9px;
+          top: -14px;
+        }
       }
     }
   }
-
 `;
 
 
 const Header: React.FC<HeaderActionProps> = ({links}) => {
     const cartData = useAppSelector(state => state?.cartReducer?.items);
+    const installationProduct: InstallationProduct | null = useAppSelector(state => state.installationProductReducer.item);
     const {themeSettings} = useThemeContext();
     const {
         headerLogo,
@@ -246,11 +269,10 @@ const Header: React.FC<HeaderActionProps> = ({links}) => {
     const dispatch = useAppDispatch();
 
     const totalQuantity = cartData.reduce((accumulator, product) => {
-        if (product?.quantity) {
-            return accumulator + product.quantity;
-        }
-        return accumulator;
+        return accumulator + (product?.quantity || 0);
     }, 0);
+    const totalQuantitys = installationProduct?.installation ? totalQuantity + 1 : totalQuantity;
+
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isPageScrolled, setIsPageScrolled] = useState(false);
@@ -269,9 +291,13 @@ const Header: React.FC<HeaderActionProps> = ({links}) => {
 
     useEffect(() => {
         const existingCart: CartItem[] = getFromLocalStorage("SolsamCartItems") || [];
-        const installation = getFromLocalStorage("SolsamCartInstallationProduct") || {};
+        const installationProduct: InstallationProduct | null = getFromLocalStorage("SolsamInstallationProduct");
+
         dispatch(addMultipleItems(existingCart));
-        dispatch(setInstallationProduct(installation));
+        if (installationProduct) {
+            dispatch(setInstallationProduct(installationProduct));
+        }
+
     }, [dispatch])
 
     return (
@@ -302,15 +328,15 @@ const Header: React.FC<HeaderActionProps> = ({links}) => {
                             title={headerButtonTitle}
                             type={headerButtonType}
                     />
-
-                    {
-                        !!totalQuantity &&
-                        <Link href={'/varukorg'} className="site-header__cart_button">
-                            <ShoppingBag/>
-                            <span className={`site-header__cart_items`}>{totalQuantity}</span>
-                        </Link>
-                    }
                 </div>
+
+                {
+                    !!totalQuantitys &&
+                    <Link href={'/varukorg'} className="site-header__cart_button">
+                        <ShoppingBag/>
+                        <span className={`site-header__cart_items`}>{totalQuantitys}</span>
+                    </Link>
+                }
 
                 <button onClick={() => setIsMobileMenuOpen(true)} className={'site-header__hamburger'}>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">

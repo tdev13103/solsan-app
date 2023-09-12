@@ -12,7 +12,7 @@ import {useProductsContext} from "@/context/products.context";
 import Image from "next/image";
 import {useThemeContext} from "@/context/theme.context";
 import {useAppDispatch} from "@/redux/hooks";
-import {setCartState, setInstallationProduct} from "@/redux/features/cartActions";
+import {setCartState} from "@/redux/features/cartActions";
 import {useDisclosure} from "@mantine/hooks";
 import ProductModal from "@/components/ProductModal";
 
@@ -37,19 +37,24 @@ interface ProductOfferProps {
 type CartItem = {
     name: string | undefined;
     id: number;
-    price: string | undefined;
+    price: string;
     quantity: number;
     image: {
         sourceUrl: string;
         title: string;
     }
     equipment: string;
+    taxStatus: string;
 };
 
 const Wrapper = styled.div`
   overflow: hidden;
   padding-top: ${theme.spaces.medium3};
   padding-bottom: ${theme.spaces.medium3};
+
+  @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+    padding-top: ${theme.spaces.small};
+  }
 
   .product-offer {
 
@@ -62,16 +67,34 @@ const Wrapper = styled.div`
 
       @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
         margin-bottom: ${theme.spaces.small};
+        font-size: 28px;
       }
     }
 
     &__desc {
       margin-bottom: ${theme.spaces.small};
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        margin-bottom: ${theme.spaces.normal};
+      }
     }
 
     &__products {
       grid-column-gap: 33px;
       grid-row-gap: 33px;
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m1270}) {
+        grid-column-gap: 16px;
+        grid-row-gap: 16px;
+      }
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m1024}) {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        grid-template-columns: 1fr;
+      }
     }
 
     &__product {
@@ -83,6 +106,10 @@ const Wrapper = styled.div`
       flex-direction: column;
       align-items: flex-start;
       z-index: 1;
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m1270}) {
+        padding: ${theme.spaces.small};
+      }
     }
 
     &__product-title {
@@ -94,8 +121,12 @@ const Wrapper = styled.div`
     }
 
     &__p-vat-title {
-      margin-bottom: ${theme.spaces.mini};
+      margin-bottom: ${theme.spaces.gridGap2};
       color: ${theme.colors.colorNavyLight};
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        margin-bottom: ${theme.spaces.normal};
+      }
     }
 
     &__p-icon {
@@ -112,6 +143,7 @@ const Wrapper = styled.div`
       display: flex;
       align-items: flex-start;
       margin-bottom: ${theme.spaces.mini};
+      margin-top: auto;
     }
 
     &__p-price {
@@ -120,6 +152,10 @@ const Wrapper = styled.div`
 
     &__p-excerpt {
       margin-bottom: ${theme.spaces.small};
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        margin-bottom: ${theme.spaces.normal};
+      }
     }
 
     &__p-label {
@@ -133,6 +169,10 @@ const Wrapper = styled.div`
       z-index: 1;
       bottom: 121px;
       right: 0;
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m1270}) {
+        display: none;
+      }
     }
 
     &__buttons {
@@ -143,6 +183,17 @@ const Wrapper = styled.div`
 
       @media screen and (max-width: ${theme.responsiveMediaSizes.m1270}) {
         flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        gap: 16px;
+      }
+    }
+
+    &__cart-btn {
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m1270}) {
+        width: 100%;
       }
     }
   }
@@ -175,24 +226,22 @@ const ProductOffer: FC<ProductOfferProps> = ({
         event.preventDefault();
         const currentProduct = selectedProducts.find(product => product?.productId === productId);
         const numericPrice = currentProduct?.price?.replace(/[^\d,.]/g, '')?.split('.')[0]?.replace(/,/g, ' ');
-        const numericInstallationPrice = installationProduct?.price?.replace(/[^\d,.]/g, '')?.split('.')[0]?.replace(/,/g, ' ');
 
-        const cartItem: CartItem = {
-            id: productId,
-            quantity: 1,
-            name: currentProduct?.name,
-            price: numericPrice,
-            image: currentProduct?.image || {
-                sourceUrl: '',
-                title: ''
-            },
-            equipment: currentProduct?.woocommerceProductSettings?.productEquipment || '',
-        };
-
-        dispatch(setCartState(cartItem));
-        dispatch(setInstallationProduct({
-            price: numericInstallationPrice ?? ''
-        }));
+        if (currentProduct) {
+            const cartItem: CartItem = {
+                id: productId,
+                quantity: 1,
+                name: currentProduct?.name,
+                price: numericPrice as string,
+                image: currentProduct?.image || {
+                    sourceUrl: '',
+                    title: ''
+                },
+                equipment: currentProduct?.woocommerceProductSettings?.productEquipment || '',
+                taxStatus: currentProduct.taxStatus
+            };
+            dispatch(setCartState(cartItem));
+        }
 
         close();
     }
@@ -308,7 +357,7 @@ const ProductOffer: FC<ProductOfferProps> = ({
                 </GridSystem>
             </Container>
             <ProductModal close={close} opened={opened} addToCart={addToCart} selectedProducts={selectedProducts}
-                          productId={selectedProductId}/>
+                          productId={selectedProductId} installationProduct={installationProduct}/>
         </Wrapper>
     );
 };

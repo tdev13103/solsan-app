@@ -35,6 +35,17 @@ type CartItem = {
     equipment: string;
 };
 
+type InstallationProduct = {
+    name?: string | undefined;
+    price?: string | undefined;
+    image?: {
+        sourceUrl: string;
+        title: string;
+    };
+    equipment?: string;
+    installation?: boolean;
+};
+
 const Wrapper = styled.div`
   padding-bottom: ${theme.spaces.large19};
 
@@ -132,6 +143,7 @@ const Wrapper = styled.div`
 
 const ProductCheckout: FC<ProductCheckoutProps> = ({data: {pageAdditionalSettings}}) => {
     const cartData: CartItem[] = useAppSelector(state => state?.cartReducer?.items);
+    const installationProduct: InstallationProduct | null = useAppSelector(state => state.installationProductReducer.item);
 
     return (
         <Wrapper className={`${pageAdditionalSettings?.isItGeneralPage ? 'page-without-banner' : ''}`}>
@@ -201,7 +213,7 @@ const ProductCheckout: FC<ProductCheckoutProps> = ({data: {pageAdditionalSetting
                                     className={'product-checkout__price'}
                                     variant={'body_1_large'}
                                     type={'p'}>
-                                    0
+                                    {installationProduct?.price}
                                 </Typography>
                                 <Typography
                                     className={'product-checkout__currency'}
@@ -212,7 +224,7 @@ const ProductCheckout: FC<ProductCheckoutProps> = ({data: {pageAdditionalSetting
                             </div>
                         </div>
 
-                        <CartTotal cartData={cartData}/>
+                        <CartTotal cartData={cartData} installationProduct={installationProduct}/>
                     </div>
                     <CheckoutForm/>
                 </GridSystem>

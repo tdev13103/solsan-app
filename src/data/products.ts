@@ -22,6 +22,7 @@ query GetProducts {
 	      content
 	      uri
 	      productId
+	      taxStatus
       }
     }
   }

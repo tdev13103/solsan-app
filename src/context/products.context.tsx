@@ -12,6 +12,7 @@ interface ProductsSettings {
 	name: string;
 	uri: string;
 	productId: number;
+	taxStatus: string;
 	price: string;
 	woocommerceProductSettings: {
 		displayVatTitle: boolean;

@@ -1,26 +1,30 @@
 @import './_reset.scss';
 
 body {
-    background: #fff;
-    position: relative;
+  background: #fff;
+  position: relative;
 
-    &.popup-open {
-        overflow: hidden;
-    }
+  &.popup-open {
+    overflow: hidden;
+  }
 
-    * {
-        font-style: normal;
-        font-weight: 400;
-        color: #221551;
-        box-sizing: border-box;
-    }
+  * {
+    font-style: normal;
+    font-weight: 400;
+    color: #221551;
+    box-sizing: border-box;
+  }
 
-    textarea {
-        resize: none;
-    }
+  textarea {
+    resize: none;
+  }
 
 }
 
 .page-without-banner {
-    padding-top: 175px;
+  padding-top: 175px;
+
+  @media screen and (max-width: 480px) {
+    padding-top: 144px;
+  }
 }

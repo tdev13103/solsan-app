@@ -4,33 +4,22 @@ import {saveToLocalStorage} from "@/utils/localStorageUtils";
 type CartItem = {
     name: string | undefined;
     id: number;
-    price: string | undefined;
+    price: string;
     quantity: number;
     image: {
         sourceUrl: string;
         title: string;
-    }
+    };
     equipment: string;
+    taxStatus: string;
 };
-
-type InstallationProductProps ={
-    installation?: boolean;
-    price?: string;
-}
 
 type InitialStateType = {
     items: CartItem[];
-    installationProduct: InstallationProductProps
-
 };
 
 const initialState: InitialStateType = {
     items: [],
-    installationProduct: {
-        installation: false,
-        price: ''
-    }
-
 };
 
 export const cart = createSlice({
@@ -90,27 +79,11 @@ export const cart = createSlice({
             state.items = [...state.items, ...action.payload];
             saveToLocalStorage("SolsamCartItems", state.items);
         },
-        setInstallationProduct: (state, action: PayloadAction<InstallationProductProps>) => {
-            const updatedInstallationProduct = {...state.installationProduct};
-
-            if (action.payload.installation !== undefined) {
-                updatedInstallationProduct.installation = action.payload.installation;
-            }
-
-            if (action.payload.price !== undefined) {
-                updatedInstallationProduct.price = action.payload.price;
-            }
-
-            state.installationProduct = updatedInstallationProduct;
-
-            saveToLocalStorage("SolsamCartInstallationProduct", updatedInstallationProduct);
-        },
     },
 });
 
 
 export const {
-    setInstallationProduct,
     setCartState,
     updateCartItem,
     deleteCartItem,

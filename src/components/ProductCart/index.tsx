@@ -9,13 +9,15 @@ import Container from "@/components/Container";
 import Image from "next/image";
 import Minus from "@/components/Icons/Minus";
 import Plus from "@/components/Icons/Plus";
-import {deleteCartItem, setInstallationProduct, updateCartItem} from "@/redux/features/cartActions";
+import {deleteCartItem, updateCartItem} from "@/redux/features/cartActions";
 import Link from "next/link";
 import RemoveProduct from "@/components/Icons/RemoveProduct";
 import Button from "@/components/Button";
 import CartTotal from "@/components/CartTotal";
 import axios from "axios";
 import {useRouter} from "next/navigation";
+import {setInstallationProduct} from "@/redux/features/installationActions";
+import {useProductsContext} from "@/context/products.context";
 
 interface ProductCartProps {
     data: {
@@ -32,22 +34,39 @@ interface ProductCartProps {
 type CartItem = {
     name: string | undefined;
     id: number;
-    price: string | undefined;
+    price: string;
     quantity: number;
     image: {
         sourceUrl: string;
         title: string;
     };
     equipment: string;
+    taxStatus: string;
 };
 
 type NewCartItem = {
     quantity: number;
-    total_amount: "" | undefined | number;
+    total_amount: string | undefined | number;
     image_url?: string;
+    tax_rate?: number;
+    total_tax_amount?: number;
     name: string | undefined;
     unit_price: "" | undefined | number
 };
+
+type InstallationProduct = {
+    name?: string | undefined;
+    id?: number;
+    price?: string;
+    image?: {
+        sourceUrl: string;
+        title: string;
+    };
+    equipment?: string;
+    quantity?: number;
+    installation?: boolean;
+    taxStatus?: string;
+}
 
 const Wrapper = styled.div`
   padding-bottom: ${theme.spaces.large19};
@@ -56,6 +75,10 @@ const Wrapper = styled.div`
 
     &__title {
       margin: 0 0 ${theme.spaces.normal};
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        margin: 0 0 ${theme.spaces.medium2};
+      }
     }
 
     &__box_wrap {
@@ -73,6 +96,10 @@ const Wrapper = styled.div`
       align-self: stretch;
       margin: 0 0 ${theme.spaces.medium3};
 
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        margin: 0 0 ${theme.spaces.medium1};
+      }
+
       &_title {
         font-size: 16px;
       }
@@ -89,8 +116,6 @@ const Wrapper = styled.div`
 
     &__installation_field-label {
       padding-left: ${theme.spaces.gridGap2};
-      display: flex;
-      align-items: center;
       position: relative;
       z-index: 1;
       color: #221551;
@@ -132,8 +157,8 @@ const Wrapper = styled.div`
 
     &__card {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
       margin: 0 0 ${theme.spaces.medium1};
     }
 
@@ -148,17 +173,44 @@ const Wrapper = styled.div`
         align-items: center;
         border-radius: 12px;
         border: 1px solid #221551;
+
+        &.color {
+          background: #E8EAFF;
+        }
+
+        @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+          width: 59px;
+          height: 59px;
+          padding: 3px 6px 4px 6px;
+
+          img {
+            width: 47px;
+            height: 52px;
+          }
+        }
       }
     }
 
     &__p_content_wrap {
       display: flex;
-      gap: 16px;
+      width: 100%;
+      justify-content: space-between;
+      position: relative;
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        flex-direction: column;
+        padding-right: 38px;
+      }
     }
 
     &__p_equipment {
       font-size: 16px;
       margin: 0 0 ${theme.spaces.mini};
+      max-width: 470px;
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        margin: 0 0 ${theme.spaces.small};
+      }
     }
 
     &__name {
@@ -179,6 +231,10 @@ const Wrapper = styled.div`
         display: flex;
         align-items: center;
         gap: 8px;
+
+        @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+          margin: 0 0 ${theme.spaces.small};
+        }
       }
 
       &_btn {
@@ -200,18 +256,35 @@ const Wrapper = styled.div`
       border: none;
       outline: none;
       cursor: pointer;
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
     }
 
     &__checkout-btn {
-      margin-top: ${theme.spaces.medium1};
+      margin-top: ${theme.spaces.medium3};
+
+      @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+        width: 100%;
+      }
     }
   }
 `
 
 const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => {
     const {themeSettings: {productModal}} = useThemeContext()
+    const {productsSettings: {taxRates}} = useProductsContext()
     const cartData: CartItem[] = useAppSelector(state => state?.cartReducer?.items);
-    const installation: boolean | undefined = useAppSelector(state => state.cartReducer.installationProduct.installation);
+    const installationProduct: InstallationProduct | null | undefined = useAppSelector(state => state.installationProductReducer.item);
+    const taxRate = taxRates.find(rate => rate?.name === 'Tax')?.rate as string;
 
     const [totalPrice, setTotalPrice] = useState<number>(0)
     const [shippingValue, setShippingValue] = useState<number>(0)
@@ -229,7 +302,6 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
             }))
         }
     }
-
 
     const updateCartItems = (productId: number, operation: 'add' | 'remove') => {
         const productIndex = cartData.findIndex((product) => product.id === productId);
@@ -257,7 +329,6 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
         }
     };
 
-
     const plusItemToCart = (productId: number) => {
         updateCartItems(productId, 'add');
     };
@@ -267,47 +338,97 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
     };
     const removeItemFromCart = (productId: number) => {
         dispatch(deleteCartItem(productId));
+
+        if (cartData.length <= 1) {
+            dispatch(setInstallationProduct({
+                installation: false
+            }))
+        }
+    };
+
+    const removeInstallationProduct = () => {
+        dispatch(setInstallationProduct({
+            installation: false
+        }))
+        const inputElement = ref.current;
+        if (inputElement) {
+            inputElement.checked = false
+        }
+
     };
 
     const handleCheckout = async () => {
-        const newCartData: NewCartItem[] = cartData.map(item => ({
-            image_url: item.image.sourceUrl,
-            name: item.name,
-            quantity: item.quantity,
-            total_amount: item.price && parseInt(item.price.replace(/\s/g, ''), 10) * item.quantity * 100,
-            unit_price: item.price && parseInt(item.price.replace(/\s/g, ''), 10) * 100,
-        }))
+        const updateCartData = [...cartData];
+
+        if (installationProduct?.installation) {
+            updateCartData.push(installationProduct as CartItem);
+        }
+
+        const newCartData: NewCartItem[] = updateCartData.map(item => {
+            const totalAmount = item.price && parseInt(item.price.replace(/\s/g, ''), 10) * (item.quantity ?? 1) * 100;
+            const taxRateNumber = parseFloat(taxRate) * 100;
+            const totalTaxAmount = totalAmount && totalAmount - (totalAmount * 10000 / (10000 + taxRateNumber))
+
+            return ({
+                image_url: item.image.sourceUrl,
+                name: item.name,
+                quantity: item.quantity ?? 1,
+                tax_rate: taxRateNumber ?? 0,
+                total_amount: totalAmount,
+                total_tax_amount: Math.floor(totalTaxAmount as number) ?? 0,
+                unit_price: item.price && parseInt(item.price.replace(/\s/g, ''), 10) * 100,
+            })
+        })
         newCartData.push({
                 "name": 'Frakt',
                 "quantity": 1,
+                "tax_rate": 0,
                 "total_amount": shippingValue,
+                "total_tax_amount": 0,
                 "unit_price": shippingValue
             },
             {
                 "name": 'Moms',
                 "quantity": 1,
+                "tax_rate": 0,
                 "total_amount": VATValue,
+                "total_tax_amount": 0,
                 "unit_price": VATValue
             }
         )
+
+        const orderTaxAmount = newCartData.reduce((accumulator, cart) => {
+            if (cart.total_tax_amount) {
+                return accumulator + cart.total_tax_amount
+            }
+
+            return accumulator
+        }, 0);
+
         const paymentData = JSON.stringify({
                 "locale": "en-SE",
                 "purchase_country": "SE",
                 "purchase_currency": "SEK",
                 "order_amount": totalPrice * 100,
+                "order_tax_amount": orderTaxAmount,
                 "order_lines": newCartData,
-                "intent": "buy",
                 "merchant_urls": {
-                    "authorization": "https://api.playground.klarna.com/payments/v1/authorization"
+                    "terms": "https://merchant.com/terms.html",
+                    "checkout": "https://merchant.com/checkout.html?order_id={checkout.order.id}",
+                    "confirmation": "https://merchant.com/confirmation.html?order_id={checkout.order.id}",
+                    "push": "https://merchant.com/api/push?order_id={checkout.order.id}"
                 }
             }
         )
+
+        console.log('paymentData', paymentData);
         localStorage.setItem('SolsamPaymentData', paymentData)
 
         try {
-            const response = await axios.post('/api/sessions', paymentData);
+            const response = await axios.post('/api/create-order-klarna', paymentData);
 
             const {data} = response.data;
+            console.log('sessionData', data);
             localStorage.setItem('sessionData', JSON.stringify(data))
 
             router.push('/till-kassan')
@@ -347,12 +468,12 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                         cartData?.map((item, idx) => {
                             return (
                                 <div className={'product-cart__card'} key={idx}>
+                                    <figure className={'product-cart__image_wrap'}>
+                                        <Image className={'product-cart__image'} src={item?.image?.sourceUrl}
+                                               alt={item?.image?.title}
+                                               width={80} height={80}/>
+                                    </figure>
                                     <div className={'product-cart__p_content_wrap'}>
-                                        <figure className={'product-cart__image_wrap'}>
-                                            <Image className={'product-cart__image'} src={item?.image?.sourceUrl}
-                                                   alt={item?.image?.title}
-                                                   width={80} height={80}/>
-                                        </figure>
                                         <div className={'product-cart__p_content'}>
                                             <Typography
                                                 className={'product-cart__name'}
@@ -384,31 +505,80 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                                                 </button>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className={'product-cart__price-wrap'}>
-                                        {
-                                            item?.price &&
+                                        <div className={'product-cart__price-wrap'}>
+                                            {
+                                                item?.price &&
+                                                <Typography
+                                                    className={'product-cart__price'}
+                                                    variant={'body_1_large'}
+                                                    type={'p'}>
+                                                    {item?.price}
+                                                </Typography>
+                                            }
                                             <Typography
-                                                className={'product-cart__price'}
+                                                className={'product-cart__currency'}
                                                 variant={'body_1_large'}
                                                 type={'p'}>
-                                                {item?.price}
+                                                SEK
                                             </Typography>
-                                        }
-                                        <Typography
-                                            className={'product-cart__currency'}
-                                            variant={'body_1_large'}
-                                            type={'p'}>
-                                            SEK
-                                        </Typography>
-                                        <button className={'product-cart__remove'}
-                                                onClick={() => removeItemFromCart(item?.id)}>
-                                            <RemoveProduct/>
-                                        </button>
+                                            <button className={'product-cart__remove'}
+                                                    onClick={() => removeItemFromCart(item?.id)}>
+                                                <RemoveProduct/>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             )
                         })
+                    }
+                    {
+                        installationProduct?.installation &&
+                        <div className={'product-cart__card'}>
+                            <figure className={'product-cart__image_wrap color'}>
+                                <Image className={'product-cart__image'}
+                                       src={installationProduct?.image?.sourceUrl || ''}
+                                       alt={installationProduct?.image?.title || ''}
+                                       width={80} height={80}/>
+                            </figure>
+                            <div className={'product-cart__p_content_wrap'}>
+                                <div className={'product-cart__p_content'}>
+                                    <Typography
+                                        className={'product-cart__name'}
+                                        variant={'body_1_large'}
+                                        type={'p'}>
+                                        {installationProduct?.name}
+                                    </Typography>
+                                    {
+                                        installationProduct?.equipment &&
+                                        <Typography
+                                            className={'product-cart__p_equipment'}
+                                            variant={'body_1_large'}
+                                            dangerouslySetInnerHTML={{__html: installationProduct?.equipment}}/>
+                                    }
+                                </div>
+                                <div className={'product-cart__price-wrap'}>
+                                    {
+                                        installationProduct?.price &&
+                                        <Typography
+                                            className={'product-cart__price'}
+                                            variant={'body_1_large'}
+                                            type={'p'}>
+                                            {installationProduct?.price}
+                                        </Typography>
+                                    }
+                                    <Typography
+                                        className={'product-cart__currency'}
+                                        variant={'body_1_large'}
+                                        type={'p'}>
+                                        SEK
+                                    </Typography>
+                                    <button className={'product-cart__remove'}
+                                            onClick={removeInstallationProduct}>
+                                        <RemoveProduct/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     }
                     <div className={'product-cart__reference'}>
                         <Typography
@@ -425,7 +595,7 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                                        name='installation'
                                        ref={ref}
                                        type='checkbox'
-                                       defaultChecked={installation}
+                                       defaultChecked={installationProduct?.installation}
                                 />
                                 <label htmlFor={`installation`}
                                        className={`product-cart__installation_field-label`}
@@ -435,6 +605,7 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                     </div>
 
                     <CartTotal cartData={cartData} setTotalPrice={setTotalPrice}
+                               installationProduct={installationProduct}
                                setShippingValue={setShippingValue} setVATValue={setVATValue}/>
 
                     <Button type={'button_2'}
