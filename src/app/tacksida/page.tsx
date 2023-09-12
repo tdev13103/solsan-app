@@ -10,6 +10,7 @@ import {useAppDispatch} from "@/redux/hooks";
 import Container from "@/components/Container";
 import {useRouter} from "next/navigation";
 import CartTotal from "@/components/CartTotal";
+import Button from "@/components/Button";
 
 type CartItem = {
     name: string | undefined;
@@ -118,30 +119,11 @@ const Wrapper = styled.div`
       font-size: 16px;
     }
 
-    &__quantity {
+    &__home-btn_wrap {
       display: flex;
-      padding: 4px 12px;
       align-items: center;
-      font-size: 16px;
-      border-radius: 6px;
-      border: 1px solid #221551;
-
-      &_wrap {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      &_btn {
-        display: flex;
-        background: none;
-        cursor: pointer;
-        padding: 4px;
-        align-items: flex-start;
-        gap: 10px;
-        border-radius: 6px;
-        border: 1px solid #221551;
-      }
+      justify-content: center;
+      margin: ${theme.spaces.medium3} 0 0;
     }
   }
 `
@@ -272,6 +254,13 @@ const TacksidaPage = () => {
                         cartData?.length &&
                         <CartTotal cartData={cartData} installationProduct={installationProduct}/>
                     }
+                    <div className={'thanks__home-btn_wrap'}>
+                        <Button type={'button_2'}
+                                title={'Fortsätt'}
+                                isHyperlink={true}
+                                hrefLink={'/'}
+                                className={'thanks__home-btn'}/>
+                    </div>
                 </div>
             </Container>
         </Wrapper>

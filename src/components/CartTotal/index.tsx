@@ -59,6 +59,14 @@ const Wrapper = styled.div`
         @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
           margin: 0 0 ${theme.spaces.small};
         }
+
+        &.top {
+          margin: ${theme.spaces.normal} 0 0;
+
+          @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
+            margin: ${theme.spaces.small} 0 0 ;
+          }
+        }
       }
     }
 
@@ -118,6 +126,7 @@ const CartTotal: FC<CartTotalProps> = ({
     const pathname = usePathname()
 
     const marginTopClass = (pathname === '/till-kassan' || pathname === '/tacksida') ? 'top' : ''
+    const tacksidaPage = pathname === '/tacksida'
     const shippingMethodCost = shippingMethods.find(method => method?.title === 'Flat rate')?.cost;
     const taxRate = taxRates.find(rate => rate?.name === 'Tax')?.rate as string;
 
@@ -176,20 +185,23 @@ const CartTotal: FC<CartTotalProps> = ({
 
     return (
         <Wrapper className={marginTopClass}>
-            <div className={'cart-total__total_wrap'}>
-                <Typography
-                    className={'cart-total__total_title'}
-                    variant={'body_1_large'}
-                    type={'p'}>
-                    Varukorg totalt
-                </Typography>
-                <Typography
-                    className={'cart-total__total_price'}
-                    variant={'body_1_large'}
-                    type={'p'}>
-                    {`${totalPriceWithTaxAndRate} SEK`}
-                </Typography>
-            </div>
+            {
+                !tacksidaPage &&
+                <div className={'cart-total__total_wrap'}>
+                    <Typography
+                        className={'cart-total__total_title'}
+                        variant={'body_1_large'}
+                        type={'p'}>
+                        Varukorg totalt
+                    </Typography>
+                    <Typography
+                        className={'cart-total__total_price'}
+                        variant={'body_1_large'}
+                        type={'p'}>
+                        {`${totalPriceWithTaxAndRate} SEK`}
+                    </Typography>
+                </div>
+            }
 
             <div className={'cart-total__vat'}>
                 <Typography
@@ -245,6 +257,23 @@ const CartTotal: FC<CartTotalProps> = ({
                 *Fastlandet Götaland & Svealand. För Norrland samt Gotland och övriga öar tillkommer extra avgift.
                 Kontakta oss för mer information.
             </Typography>
+            {
+                tacksidaPage &&
+                <div className={'cart-total__total_wrap top'}>
+                    <Typography
+                        className={'cart-total__total_title'}
+                        variant={'body_1_large'}
+                        type={'p'}>
+                        Totalt inkl. moms
+                    </Typography>
+                    <Typography
+                        className={'cart-total__total_price'}
+                        variant={'body_1_large'}
+                        type={'p'}>
+                        {`${totalPriceWithTaxAndRate} SEK`}
+                    </Typography>
+                </div>
+            }
         </Wrapper>
     );
 };
