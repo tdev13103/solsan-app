@@ -64,7 +64,7 @@ const Wrapper = styled.div`
           margin: ${theme.spaces.normal} 0 0;
 
           @media screen and (max-width: ${theme.responsiveMediaSizes.m480}) {
-            margin: ${theme.spaces.small} 0 0 ;
+            margin: ${theme.spaces.small} 0 0;
           }
         }
       }
