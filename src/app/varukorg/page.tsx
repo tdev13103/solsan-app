@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const VarukorgPage = async () => {
 	const data = await pageSettings( 'varukorg' );
-	console.log('data', data);
+	
 	if ( data !== null ) {
 		const { seo }: any = data;
 		

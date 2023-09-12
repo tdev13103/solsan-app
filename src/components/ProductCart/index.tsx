@@ -577,29 +577,32 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                             </div>
                         </div>
                     }
-                    <div className={'product-cart__reference'}>
-                        <Typography
-                            className={'product-cart__reference_title'}
-                            variant={'body_1_large'}
-                            type={'p'}>
-                            {productModal?.referenceText}
-                        </Typography>
-                        {
-                            productModal?.referenceCheckboxLabel &&
-                            <div onClick={handleClick}>
-                                <input id={'installation'}
-                                       className={`product-cart__installation`}
-                                       name='installation'
-                                       ref={ref}
-                                       type='checkbox'
-                                       defaultChecked={installationProduct?.installation}
-                                />
-                                <label htmlFor={`installation`}
-                                       className={`product-cart__installation_field-label`}
-                                       dangerouslySetInnerHTML={{__html: productModal?.referenceCheckboxLabel}}/>
-                            </div>
-                        }
-                    </div>
+                    {
+                        !   installationProduct?.installation &&
+                        <div className={'product-cart__reference'}>
+                            <Typography
+                                className={'product-cart__reference_title'}
+                                variant={'body_1_large'}
+                                type={'p'}>
+                                {productModal?.referenceText}
+                            </Typography>
+                            {
+                                productModal?.referenceCheckboxLabel &&
+                                <div onClick={handleClick}>
+                                    <input id={'installation'}
+                                           className={`product-cart__installation`}
+                                           name='installation'
+                                           ref={ref}
+                                           type='checkbox'
+                                           defaultChecked={installationProduct?.installation}
+                                    />
+                                    <label htmlFor={`installation`}
+                                           className={`product-cart__installation_field-label`}
+                                           dangerouslySetInnerHTML={{__html: productModal?.referenceCheckboxLabel}}/>
+                                </div>
+                            }
+                        </div>
+                    }
 
                     <CartTotal cartData={cartData} setTotalPrice={setTotalPrice}
                                installationProduct={installationProduct}

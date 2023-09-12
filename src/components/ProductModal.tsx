@@ -193,14 +193,14 @@ const ProductModal: FC<ProductModalProps> = ({
 
     useEffect(() => {
         const installationProductStorage: CartItem | null = getFromLocalStorage("SolsamInstallationProduct") || null;
-console.log('installationProduct', installationProduct);
+
         if (installationProductStorage) {
             dispatch(setInstallationProduct(installationProductStorage));
         } else {
             if (installationProduct) {
                 const cartItem: CartItem = {
                     name: installationProduct?.name,
-                    price: installationProduct?.price?.replace(/[^\d,.]/g, '')?.split('.')[0]?.replace(/,/g, ' '),
+                    price: installationProduct?.price?.replace(/[^\d,.]/g, '')?.split('.')[0]?.replace(/,/g, ' ') ?? '0',
                     image: installationProduct.image,
                     equipment: installationProduct.content,
                     installation: false,

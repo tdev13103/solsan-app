@@ -6,14 +6,14 @@ export async function POST(req: Request) {
         const orderId = await req.json();
 
         if (
-            !process.env.KLARNA_API_ORDER_URL_DEV ||
-            !process.env.KLARNA_API_USERNAME_DEV ||
-            !process.env.KLARNA_API_PASSWORD_DEV
+            !process.env.KLARNA_API_ORDER_URL ||
+            !process.env.KLARNA_API_USERNAME ||
+            !process.env.KLARNA_API_PASSWORD
         ) {
             return NextResponse.error();
         }
 
-        const tokenEndpoint = `${process.env.KLARNA_API_ORDER_URL_DEV}/${orderId}`;
+        const tokenEndpoint = `${process.env.KLARNA_API_ORDER_URL}/${orderId}`;
 
         try {
             const response = await axios.get(tokenEndpoint, {
@@ -21,8 +21,8 @@ export async function POST(req: Request) {
                     'Klarna-Integrator': 'string'
                 },
                 auth: {
-                    username: process.env.KLARNA_API_USERNAME_DEV,
-                    password: process.env.KLARNA_API_PASSWORD_DEV,
+                    username: process.env.KLARNA_API_USERNAME,
+                    password: process.env.KLARNA_API_PASSWORD,
                 },
             });
 
