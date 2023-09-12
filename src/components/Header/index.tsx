@@ -36,6 +36,7 @@ type CartItem = {
         title: string;
     }
     equipment: string;
+    taxStatus: string;
 };
 
 type InstallationProduct = {
@@ -47,6 +48,7 @@ type InstallationProduct = {
     };
     equipment?: string;
     installation?: boolean;
+    taxStatus?: string;
 };
 
 
