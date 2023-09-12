@@ -36,10 +36,15 @@ export const installationProduct = createSlice({
             }
             saveToLocalStorage("SolsamInstallationProduct", state.item);
         },
+        clearInstallationProduct: (state) => {
+            state.item = null;
+            saveToLocalStorage("SolsamInstallationProduct", state.item);
+        },
     },
 });
 
 export const {
     setInstallationProduct,
+    clearInstallationProduct
 } = installationProduct.actions;
 export default installationProduct.reducer;

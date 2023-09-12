@@ -295,7 +295,10 @@ const Header: React.FC<HeaderActionProps> = ({links}) => {
         const existingCart: CartItem[] = getFromLocalStorage("SolsamCartItems") || [];
         const installationProduct: InstallationProduct | null = getFromLocalStorage("SolsamInstallationProduct");
 
-        dispatch(addMultipleItems(existingCart));
+        if (existingCart) {
+            dispatch(addMultipleItems(existingCart));
+        }
+
         if (installationProduct) {
             dispatch(setInstallationProduct(installationProduct));
         }

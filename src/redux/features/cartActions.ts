@@ -79,6 +79,10 @@ export const cart = createSlice({
             state.items = [...state.items, ...action.payload];
             saveToLocalStorage("SolsamCartItems", state.items);
         },
+        clearCart: (state) => {
+            state.items = [];
+            saveToLocalStorage("SolsamCartItems", state.items);
+        },
     },
 });
 
@@ -87,6 +91,7 @@ export const {
     setCartState,
     updateCartItem,
     deleteCartItem,
-    addMultipleItems
+    addMultipleItems,
+    clearCart
 } = cart.actions;
 export default cart.reducer;

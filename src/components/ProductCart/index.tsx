@@ -412,11 +412,9 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
                 "order_amount": totalPrice * 100,
                 "order_tax_amount": orderTaxAmount,
                 "order_lines": newCartData,
+                "intent": "buy",
                 "merchant_urls": {
-                    "terms": "https://merchant.com/terms.html",
-                    "checkout": "https://merchant.com/checkout.html?order_id={checkout.order.id}",
-                    "confirmation": "https://merchant.com/confirmation.html?order_id={checkout.order.id}",
-                    "push": "https://merchant.com/api/push?order_id={checkout.order.id}"
+                    "authorization": "https://api.playground.klarna.com/payments/v1/authorization"
                 }
             }
         )
@@ -425,10 +423,9 @@ const ProductCart: FC<ProductCartProps> = ({data: {pageAdditionalSettings}}) => 
         localStorage.setItem('SolsamPaymentData', paymentData)
 
         try {
-            const response = await axios.post('/api/create-order-klarna', paymentData);
+            const response = await axios.post('/api/sessions', paymentData);
 
             const {data} = response.data;
-            console.log('sessionData', data);
             localStorage.setItem('sessionData', JSON.stringify(data))
 
             router.push('/till-kassan')
