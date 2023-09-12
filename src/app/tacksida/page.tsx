@@ -191,10 +191,10 @@ const TacksidaPage = () => {
                     type={'h4'}>
                     Tack!<br/>Vi har tagit emot din order.
                 </Typography>
-                <Typography
-                    className={'thanks__order-number'}
-                    variant={'body_1_large'}
-                    type={'p'} dangerouslySetInnerHTML={{__html: `Ordernummer: <span>288288282</span>`}}/>
+                {/*<Typography*/}
+                {/*    className={'thanks__order-number'}*/}
+                {/*    variant={'body_1_large'}*/}
+                {/*    type={'p'} dangerouslySetInnerHTML={{__html: `Ordernummer: <span>288288282</span>`}}/>*/}
             </div>
             <Container>
                 <div className={'thanks__box'}>
