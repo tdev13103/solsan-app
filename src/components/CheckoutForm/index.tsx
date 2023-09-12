@@ -10,12 +10,6 @@ interface SessionData {
 
 const Wrapper = styled.div`
   padding-bottom: ${theme.spaces.large19};
-
-  .product-cart {
-    &__authorize {
-      margin-top: ${theme.spaces.small};
-    }
-  }
 `
 
 const CheckoutForm = () => {

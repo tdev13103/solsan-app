@@ -83,10 +83,6 @@ const Wrapper = styled.div`
       align-items: center;
       justify-content: space-between;
       margin: 0 0 ${theme.spaces.small};
-
-      &.last {
-        margin: 0 0 ${theme.spaces.medium3};
-      }
     }
 
     &__captions {
@@ -144,7 +140,7 @@ const Wrapper = styled.div`
 const ProductCheckout: FC<ProductCheckoutProps> = ({data: {pageAdditionalSettings}}) => {
     const cartData: CartItem[] = useAppSelector(state => state?.cartReducer?.items);
     const installationProduct: InstallationProduct | null = useAppSelector(state => state.installationProductReducer.item);
-
+console.log('installationProduct?.installation', installationProduct?.installation);
     return (
         <Wrapper className={`${pageAdditionalSettings?.isItGeneralPage ? 'page-without-banner' : ''}`}>
             <Container>
@@ -183,12 +179,12 @@ const ProductCheckout: FC<ProductCheckoutProps> = ({data: {pageAdditionalSetting
                                         <div className={'product-checkout__price-wrap'}>
                                             {
                                                 item?.price &&
-												<Typography
-													className={'product-checkout__price'}
-													variant={'body_1_large'}
-													type={'p'}>
+                                                <Typography
+                                                    className={'product-checkout__price'}
+                                                    variant={'body_1_large'}
+                                                    type={'p'}>
                                                     {item?.price}
-												</Typography>
+                                                </Typography>
                                             }
                                             <Typography
                                                 className={'product-checkout__currency'}
@@ -201,29 +197,31 @@ const ProductCheckout: FC<ProductCheckoutProps> = ({data: {pageAdditionalSetting
                                 )
                             })
                         }
-                        <div className={'product-checkout__card last'}>
-                            <Typography
-                                className={'product-checkout__name'}
-                                variant={'body_1_large'}
-                                type={'p'}>
-                                Intresserad av installation
-                            </Typography>
-                            <div className={'product-checkout__price-wrap'}>
+                        {
+                            installationProduct?.installation &&
+                            <div className={'product-checkout__card'}>
                                 <Typography
-                                    className={'product-checkout__price'}
+                                    className={'product-checkout__name'}
                                     variant={'body_1_large'}
                                     type={'p'}>
-                                    {installationProduct?.price}
+                                    Intresserad av installation
                                 </Typography>
-                                <Typography
-                                    className={'product-checkout__currency'}
-                                    variant={'body_1_large'}
-                                    type={'p'}>
-                                    SEK
-                                </Typography>
+                                <div className={'product-checkout__price-wrap'}>
+                                    <Typography
+                                        className={'product-checkout__price'}
+                                        variant={'body_1_large'}
+                                        type={'p'}>
+                                        {installationProduct?.price}
+                                    </Typography>
+                                    <Typography
+                                        className={'product-checkout__currency'}
+                                        variant={'body_1_large'}
+                                        type={'p'}>
+                                        SEK
+                                    </Typography>
+                                </div>
                             </div>
-                        </div>
-
+                        }
                         <CartTotal cartData={cartData} installationProduct={installationProduct}/>
                     </div>
                     <CheckoutForm/>

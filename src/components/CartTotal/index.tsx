@@ -6,6 +6,7 @@ import styled from "@emotion/styled";
 import theme from "@/styles/theme";
 import {useProductsContext} from "@/context/products.context";
 import {parseProductPrice} from "@/helpers";
+import {usePathname} from "next/navigation";
 
 interface CartItem {
     name?: string | undefined;
@@ -30,6 +31,11 @@ interface CartTotalProps {
 }
 
 const Wrapper = styled.div`
+
+  &.top {
+    margin: ${theme.spaces.medium3} 0 0;
+  }
+  
   .cart-total {
 
     &__total {
@@ -109,7 +115,9 @@ const CartTotal: FC<CartTotalProps> = ({
             taxRates
         }
     } = useProductsContext()
+    const pathname = usePathname()
 
+    const marginTopClass = pathname === '/till-kassan' ? 'top' : ''
     const shippingMethodCost = shippingMethods.find(method => method?.title === 'Flat rate')?.cost;
     const taxRate = taxRates.find(rate => rate?.name === 'Tax')?.rate as string;
 
@@ -167,7 +175,7 @@ const CartTotal: FC<CartTotalProps> = ({
     }, [setTotalPrice, setShippingValue, setVATValue, totalPriceWithTaxAndRate, shippingMethodCost, productVat]);
 
     return (
-        <Wrapper>
+        <Wrapper className={marginTopClass}>
             <div className={'cart-total__total_wrap'}>
                 <Typography
                     className={'cart-total__total_title'}
